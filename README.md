@@ -64,6 +64,5 @@ To get started with the project, follow these steps:
 
 ## Contributors
 
-- [Your Name]
-- [Contributor 1]
-- [Contributor 2]
+- Darian Hiebl
+- Federico Miranda
