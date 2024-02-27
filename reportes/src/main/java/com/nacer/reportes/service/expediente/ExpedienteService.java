@@ -15,7 +15,5 @@ public interface ExpedienteService {
     Optional<Expediente> getExpedientePorId(UUID id);
     List<Expediente> getTodosLosExpedientes();
     List<Expediente> getExpedientePorEfector(Efector efector);
-    Optional<Expediente> getExpedientePorResolucion(Resolucion resolucion);
-    List<Expediente> getExpedientesSinResolucion();
     void crearExpediente(Expediente expediente);
 }

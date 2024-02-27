@@ -2,11 +2,12 @@ package com.nacer.reportes.mapper.auditor;
 
 import com.nacer.reportes.dto.AuditorDTO;
 import com.nacer.reportes.model.Auditor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-@Service
+@Component
 public class AuditorMapper {
 
     public AuditorDTO mapAuditorToAuditorDTO(Auditor auditor){

@@ -13,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 @AllArgsConstructor
 public class BootstrapData implements CommandLineRunner {
@@ -27,7 +28,7 @@ public class BootstrapData implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Create and save User
         User user = new User("email@example.com", "password");
-        user.setRoles(new HashSet<>(Arrays.asList(Rol.USUARIO)));
+        user.setRoles(List.of(Rol.USER));
         userRepository.save(user);
 
         // Create and save Efector

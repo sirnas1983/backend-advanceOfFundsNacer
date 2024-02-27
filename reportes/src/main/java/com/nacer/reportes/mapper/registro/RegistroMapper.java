@@ -5,12 +5,13 @@ import com.nacer.reportes.mapper.ListMapper;
 import com.nacer.reportes.model.Registro;
 import com.nacer.reportes.service.efector.EfectorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Component
 public class RegistroMapper {
 
     @Autowired

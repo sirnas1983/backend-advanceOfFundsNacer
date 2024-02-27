@@ -4,24 +4,26 @@ import com.nacer.reportes.dto.ExpedienteDTO;
 import com.nacer.reportes.mapper.ListMapper;
 import com.nacer.reportes.mapper.auditor.AuditorMapper;
 import com.nacer.reportes.mapper.efector.EfectorMapper;
+import com.nacer.reportes.mapper.efector.EfectorSimplificadoMapper;
 import com.nacer.reportes.model.Expediente;
 import com.nacer.reportes.service.efector.EfectorService;
 import com.nacer.reportes.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Component
 public class ExpedienteMapper {
 
     @Autowired
     AuditorMapper auditorMapper;
     @Autowired
     UserService userService;
+
     @Autowired
-    EfectorMapper efectorMapper;
+    EfectorSimplificadoMapper efectorSimplificadoMapper;
     @Autowired
     EfectorService efectorService;
 
@@ -31,7 +33,7 @@ public class ExpedienteMapper {
         if (!Objects.isNull(expediente)) {
             expedienteDTO.setFechaExpediente(expediente.getFechaExpediente());
             expedienteDTO.setId(expediente.getId());
-            expedienteDTO.setEfectorDTOSimplificado(efectorMapper.mapEfectorToEfectorDTOSimplificado(expediente.getEfector()));
+            expedienteDTO.setEfectorDTOSimplificado(efectorSimplificadoMapper.mapEfectorToEfectorDTOSimplificado(expediente.getEfector()));
             expedienteDTO.setNombre(expediente.getNombre());
             expedienteDTO.setNumero(expediente.getNumero());
             expedienteDTO.setUserEmail(expediente.getUser().getEmail());

@@ -14,12 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
+@Table(name = "appUser")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -31,7 +30,7 @@ public class User extends EntidadNacer implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<Rol> roles = new HashSet<>();
+    private List<Rol> roles = new ArrayList<>();
 
     public User(String email, String password) {
         this.email = email;
@@ -70,10 +69,15 @@ public class User extends EntidadNacer implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Log the roles before mapping to authorities
+        System.out.println("User roles: " + roles);
+
+        // Map roles to authorities with the "ROLE_" prefix
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
                 .collect(Collectors.toList());
     }
+
     @Override
     public String getUsername() {
         return email;

@@ -38,16 +38,6 @@ public class ExpedienteServiceImpl implements ExpedienteService{
     }
 
     @Override
-    public Optional<Expediente> getExpedientePorResolucion(Resolucion resolucion) {
-        return expedienteRepository.findByResolucion(resolucion);
-    }
-
-    @Override
-    public List<Expediente> getExpedientesSinResolucion() {
-        return expedienteRepository.findSinResolucion();
-    }
-
-    @Override
     public void crearExpediente(Expediente expediente) {
         expedienteRepository.save(expediente);
 

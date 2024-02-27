@@ -8,20 +8,25 @@ import com.nacer.reportes.mapper.expediente.ExpedienteMapper;
 import com.nacer.reportes.mapper.registro.RegistroMapper;
 import com.nacer.reportes.model.Efector;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Component
 public class EfectorMapper {
 
     @Autowired
     AuditorMapper auditorMapper;
     @Autowired
     RegistroMapper registroMapper;
+    private final ExpedienteMapper expedienteMapper;
+
     @Autowired
-    ExpedienteMapper expedienteMapper;
+    public EfectorMapper(ExpedienteMapper expedienteMapper) {
+        this.expedienteMapper = expedienteMapper;
+    }
 
 
     public EfectorDTO mapEfectorToEfectorDTO(Efector efector){
@@ -39,18 +44,7 @@ public class EfectorMapper {
         return efectorDTO;
     }
 
-    public EfectorDTOSimplificado mapEfectorToEfectorDTOSimplificado(Efector efector) {
-        EfectorDTOSimplificado efectorDTOSimplificado = new EfectorDTOSimplificado();
-        if (efector != null) {
-            efectorDTOSimplificado.setId(efector.getId());
-            efectorDTOSimplificado.setNombre(efector.getNombre());
-            efectorDTOSimplificado.setCuie(efector.getCuie());
-            efectorDTOSimplificado.setRegion(efector.getRegion());
-            efectorDTOSimplificado.setPartidaPersupestaria(efector.getPartidaPersupestaria());
-            efectorDTOSimplificado.setAuditorDTO(auditorMapper.mapAuditorToAuditorDTO(efector.getAuditor()));
-        }
-        return efectorDTOSimplificado;
-    }
+
 
     public Efector mapEfectorDtoToEfector(EfectorDTO efectorDTO){
         Efector efector = new Efector();
