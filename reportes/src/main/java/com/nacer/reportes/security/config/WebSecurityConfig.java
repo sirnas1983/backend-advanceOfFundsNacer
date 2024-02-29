@@ -1,5 +1,6 @@
 package com.nacer.reportes.security.config;
 
+import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.security.jwt.GenerateJwtToken;
 import com.nacer.reportes.security.jwt.JwtAuthTokenFilter;
 import lombok.AllArgsConstructor;
@@ -52,11 +53,11 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class) // Specify order
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/users").permitAll()
-                        .requestMatchers("/api/v1/users/authenticate").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers(ApiConstants.BASE_URL + "/users").permitAll()
+                        .requestMatchers(ApiConstants.BASE_URL + "/users/authenticate").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
     }
-
 }

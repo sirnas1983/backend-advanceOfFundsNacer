@@ -1,18 +1,24 @@
 package com.nacer.reportes.service.efector;
 
+import com.nacer.reportes.dto.EfectorDTO;
 import com.nacer.reportes.model.Efector;
-import com.nacer.reportes.model.Region;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface EfectorService {
 
-    Optional<Efector> getEfectorPorCuie(String cuie);
-    List<Efector> getEfectorPorNombre(String nombre);
-    List<Efector> getEfectorPorRegion(Region region);
-    Optional<Efector> getEfectorPorId(UUID id);
-    void guardarEfector(Efector efector);
+    Optional<EfectorDTO> getEfectorDtoPorCuie(String cuie);
 
+    void crearEfector(EfectorDTO efectorDTO);
+
+    Collection<? extends EfectorDTO> getEfectoresPorRegion(String region);
+
+    Collection<? extends EfectorDTO> getTodosLosEfectores();
+
+    void actualizarEfector(EfectorDTO efectorDTO);
+
+    boolean existsByCuie(String cuie);
+
+    Optional<Efector> getEfectorByCuie(String cuie);
 }

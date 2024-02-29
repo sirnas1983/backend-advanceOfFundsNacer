@@ -3,14 +3,13 @@ package com.nacer.reportes.mapper.auditor;
 import com.nacer.reportes.dto.AuditorDTO;
 import com.nacer.reportes.model.Auditor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Component
 public class AuditorMapper {
 
-    public AuditorDTO mapAuditorToAuditorDTO(Auditor auditor){
+    public AuditorDTO mapToAuditorDTO(Auditor auditor){
         AuditorDTO auditorDTO = new AuditorDTO();
         if(!Objects.isNull(auditor)){
             auditorDTO.setId(auditor.getId());
@@ -20,7 +19,7 @@ public class AuditorMapper {
         return auditorDTO;
     }
 
-    public Auditor mapAuditorDTOToAuditor(AuditorDTO auditorDTO){
+    public Auditor mapToAuditor(AuditorDTO auditorDTO){
         Auditor auditor= new Auditor();
         if(!Objects.isNull(auditorDTO)){
             auditor.setId(auditorDTO.getId());
@@ -29,5 +28,4 @@ public class AuditorMapper {
         }
         return auditor;
     }
-
 }

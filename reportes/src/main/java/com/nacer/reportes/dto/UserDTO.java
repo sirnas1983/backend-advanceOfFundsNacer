@@ -1,26 +1,25 @@
 package com.nacer.reportes.dto;
 
-import com.nacer.reportes.model.Rol;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserDTO  {
-
+public class UserDTO {
     private UUID id;
-    private String nombre;
+    private String username; // Assuming username is the email
     private String email;
-    private Set<Rol> roles = new HashSet<>();
+    private List<String> roles;
     private AuditorDTO auditorDTO;
-
+    private boolean validated;
+    private boolean unlocked;
+    private LocalDateTime lastLoginDate;
 }

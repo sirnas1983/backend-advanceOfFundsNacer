@@ -19,6 +19,8 @@ public class Resolucion extends EntidadNacer{
     private String numero;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Expediente expediente;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private User user;
     private Float montoOtorgado;
     private LocalDate fechaResolucion;
 

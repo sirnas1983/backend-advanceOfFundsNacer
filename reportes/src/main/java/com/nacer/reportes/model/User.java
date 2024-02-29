@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,16 +28,16 @@ public class User extends EntidadNacer implements UserDetails {
 
     private String email;
     private String password;
-
+    private LocalDateTime lastLoginDate; // Last login date
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<Rol> roles = new ArrayList<>();
+
 
     public User(String email, String password) {
         this.email = email;
         this.password = encodePassword(password);
     }
-
     private String encodePassword(String password) {
         try {
             // Create MessageDigest instance for SHA-256
@@ -66,7 +67,6 @@ public class User extends EntidadNacer implements UserDetails {
         String hashedLoginPassword = encodePassword(loginPassword);
         return hashedLoginPassword.equals(password);
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Log the roles before mapping to authorities
@@ -77,38 +77,41 @@ public class User extends EntidadNacer implements UserDetails {
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
                 .collect(Collectors.toList());
     }
-
     @Override
     public String getUsername() {
         return email;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
-
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
     @Override
     public boolean isEnabled() {
         return true;
     }
-
     public void addRole(Rol role) {
         roles.add(role);
     }
-
     // Method to remove a role from the user
     public void removeRole(Rol role) {
         roles.remove(role);
     }
+    @Transient
+    public boolean isValidated() {
+        return isEnabled();
+    }
+    @Transient
+    public boolean isUnlocked() {
+        return isAccountNonLocked();
+    }
+
+
 }

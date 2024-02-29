@@ -5,5 +5,5 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class ApiConstants {
-    public static final String BASE_URL = "";
+    public static final String BASE_URL = "/api/v1";
 }

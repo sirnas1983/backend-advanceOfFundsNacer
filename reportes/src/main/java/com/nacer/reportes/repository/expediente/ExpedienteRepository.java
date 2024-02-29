@@ -2,6 +2,7 @@ package com.nacer.reportes.repository.expediente;
 
 import com.nacer.reportes.model.Efector;
 import com.nacer.reportes.model.Expediente;
+import com.nacer.reportes.model.Region;
 import com.nacer.reportes.model.Resolucion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,5 +22,12 @@ public interface ExpedienteRepository extends JpaRepository<Expediente, UUID> {
             "WHERE (?1 is null OR e.efector = ?1) "
     )
     List<Expediente> findByEfector(Efector efector);
-
+    @Query("FROM Expediente e " +
+            "WHERE (?1 is null OR e.efector.cuie LIKE ?1) "
+    )
+    List<Expediente> findByCuie(String cuie);
+    @Query("FROM Expediente e " +
+            "WHERE (?1 is null OR e.efector.region = ?1)"
+    )
+    List<Expediente> findByRegion(Region regionEnum);
 }

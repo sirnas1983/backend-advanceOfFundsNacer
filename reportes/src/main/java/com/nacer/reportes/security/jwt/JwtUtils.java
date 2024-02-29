@@ -1,8 +1,10 @@
 package com.nacer.reportes.security.jwt;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
@@ -13,6 +15,8 @@ public class JwtUtils {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
+    @Autowired
+    TokenBlacklistService tokenBlacklistService;
 
 
     public String getUserNameFromJwtToken(String token) {
@@ -21,6 +25,10 @@ public class JwtUtils {
 
     public boolean validateJwtToken(String authToken) {
         try {
+            if (tokenBlacklistService.isTokenBlacklisted(authToken)) {
+                logger.error("JWT token is blacklisted");
+                return false;
+            }
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
@@ -36,5 +44,19 @@ public class JwtUtils {
         }
 
         return false;
+    }
+
+    public static String extractTokenFromRequest(HttpServletRequest request) {
+        // Extract the Authorization header
+        String authorizationHeader = request.getHeader("Authorization");
+
+        // Check if the Authorization header is present and starts with "Bearer"
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            // Extract the token from the header
+            return authorizationHeader.substring(7); // Remove "Bearer " prefix
+        }
+
+        // If Authorization header is not present or doesn't start with "Bearer", return null
+        return null;
     }
 }

@@ -1,0 +1,63 @@
+package com.nacer.reportes.controller.registro;
+
+import com.nacer.reportes.constants.ApiConstants;
+import com.nacer.reportes.dto.RegistroDTO;
+import com.nacer.reportes.exceptions.ResourceNotFoundException;
+import com.nacer.reportes.service.registro.RegistroService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+
+
+@RestController
+@RequestMapping(value = ApiConstants.BASE_URL + "/registros", produces = {"application/json"})
+public class RegistroController {
+
+    @Autowired
+    private RegistroService registroService;
+
+    @Secured("ADMIN")
+    @PostMapping
+    public ResponseEntity<?> persistRegistro(@RequestBody @Valid RegistroDTO registroDTO) {
+        try {
+            registroService.crearRegistro(registroDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("Registro creado correctamente");
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: revise que no exista registro con ese ID");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en creación de registro");
+        }
+    }
+
+    @Secured("ADMIN")
+    @GetMapping
+    public ResponseEntity<List<RegistroDTO>> getRegistros() {
+        List<RegistroDTO> registros = registroService.getTodosLosRegistros();
+
+        if (registros.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(registros);
+        }
+    }
+
+    @Secured("ADMIN")
+    @PutMapping
+    public ResponseEntity<?> updateRegistro(@RequestBody @Valid RegistroDTO registroDTO) {
+        try {
+            registroService.updateRegistro(registroDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("Registro actualizado correctamente");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Registro not found with ID: " + registroDTO.getId());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en actualización de registro");
+        }
+    }
+}
