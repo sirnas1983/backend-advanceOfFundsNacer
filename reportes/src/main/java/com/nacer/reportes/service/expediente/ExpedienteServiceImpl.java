@@ -28,8 +28,6 @@ public class ExpedienteServiceImpl implements ExpedienteService{
     private EfectorService efectorService;
     @Autowired
     private AuthServiceImpl authService;
-    @Autowired
-    private RegistroRepository registroRepository;
 
     @Override
     public void crearExpediente(ExpedienteDTO expedienteDto) {
@@ -59,9 +57,7 @@ public class ExpedienteServiceImpl implements ExpedienteService{
             registro.setMonto(montoEx * 0.60f);
         }
         registro.setFecha(expedienteDto.getFechaExpediente());
-        registro.setEfector(efector);
-        // Save the registro
-        registroRepository.save(registro);
+        expediente.setRegistro(registro);
         // Save the expediente
         expedienteRepository.save(expediente);
     }

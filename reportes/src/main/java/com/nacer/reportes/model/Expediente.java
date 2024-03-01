@@ -20,6 +20,8 @@ public class Expediente extends EntidadNacer{
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "efector")
     private Efector efector;
+    @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Registro registro;
     private Float montoSolicitado;
     private LocalDate fechaExpediente;
 
