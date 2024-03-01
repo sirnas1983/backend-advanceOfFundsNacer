@@ -9,6 +9,7 @@ import com.nacer.reportes.security.jwt.TokenBlacklistService;
 import com.nacer.reportes.security.user.AuthenticationService;
 import com.nacer.reportes.service.user.UserService;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,21 +55,25 @@ public class UserController {
     public ResponseEntity<?> getUsers(
             @RequestParam(name="id", required = false)
             @Valid UUID id) {
-        if (Objects.isNull(id)) {
-            // If no ID is provided, return all users
-            List<UserDTO> userDTOs = userService.getUsers();
-            return ResponseEntity.ok(userDTOs);
-        } else {
-            // Find the user by ID
-            Optional<UserDTO> userOptional = userService.getUser(id);
-            if (userOptional.isPresent()) {
-                // If the user is found, return it in the response body
-                return ResponseEntity.ok(userOptional.get());
+        try {
+            if (Objects.isNull(id)) {
+                // If no ID is provided, return all users
+                List<UserDTO> userDTOs = userService.getUsers();
+                return ResponseEntity.ok(userDTOs);
             } else {
-                // If the user is not found, return a 404 Not Found response with an error message
-                String errorMessage = "User with ID " + id + " not found";
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+                // Find the user by ID
+                Optional<UserDTO> userOptional = userService.getUser(id);
+                if (userOptional.isPresent()) {
+                    // If the user is found, return it in the response body
+                    return ResponseEntity.ok(userOptional.get());
+                } else {
+                    // If the user is not found, return a 404 Not Found response with an error message
+                    String errorMessage = "User with ID " + id + " not found";
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+                }
             }
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         }
     }
     @PostMapping("/authenticate")
@@ -90,6 +95,8 @@ public class UserController {
             try {
                 String jwtToken = JwtUtils.extractTokenFromRequest(request);
                 tokenBlacklistService.blacklistToken(jwtToken);
+            } catch (ExpiredJwtException e) {
+                return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
             } catch (Exception e) {
                 // Return error response
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

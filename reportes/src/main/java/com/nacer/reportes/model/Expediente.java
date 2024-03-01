@@ -1,26 +1,25 @@
 package com.nacer.reportes.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Entity
+
 @Getter
 @Setter
+@With
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@EqualsAndHashCode(callSuper = true)
 public class Expediente extends EntidadNacer{
 
     @Column(unique = true)
     private String numero;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "efector")
     private Efector efector;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private User user;
     private Float montoSolicitado;
     private LocalDate fechaExpediente;
 

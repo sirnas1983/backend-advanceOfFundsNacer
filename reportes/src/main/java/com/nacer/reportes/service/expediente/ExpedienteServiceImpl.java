@@ -3,12 +3,12 @@ package com.nacer.reportes.service.expediente;
 import com.nacer.reportes.dto.ExpedienteDTO;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.mapper.ObjectMapper;
-import com.nacer.reportes.mapper.efector.EfectorSimplificadoMapper;
 import com.nacer.reportes.mapper.expediente.ExpedienteMapper;
 import com.nacer.reportes.model.*;
 import com.nacer.reportes.repository.expediente.ExpedienteRepository;
+import com.nacer.reportes.repository.registro.RegistroRepository;
 import com.nacer.reportes.service.efector.EfectorService;
-import com.nacer.reportes.service.user.UserService;
+import com.nacer.reportes.service.auth.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,37 +25,43 @@ public class ExpedienteServiceImpl implements ExpedienteService{
     @Autowired
     private ExpedienteMapper expedienteMapper;
     @Autowired
-    private EfectorSimplificadoMapper efectorSimplificadoMapper;
-    @Autowired
-    private UserService userService;
-    @Autowired
     private EfectorService efectorService;
+    @Autowired
+    private AuthServiceImpl authService;
+    @Autowired
+    private RegistroRepository registroRepository;
 
     @Override
     public void crearExpediente(ExpedienteDTO expedienteDto) {
-        // Retrieve the currently authenticated user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication != null ? authentication.getName() : null;
 
         // Retrieve the Efector data from the DTO
-        String cuie = expedienteDto.getEfectorDTOSimplificado().getCuie();
+        String cuie = expedienteDto.getEfector().getCuie();
         Efector efector = efectorService.getEfectorByCuie(cuie)
                 .orElseThrow(() -> new ResourceNotFoundException("Efector not found with CUIE: " + cuie));
 
         // Map ExpedienteDTO to Expediente entity
         Expediente expediente = expedienteMapper.mapToExpediente(expedienteDto);
-
         // Set the associated Efector
         expediente.setEfector(efector);
 
-        if (userEmail != null) {
-            // Set the authenticated user to the expediente
-            expediente.setUser(userService.getUserByEmail(userEmail)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail)));
+        Auditor auditor = new Auditor(LocalDate.now(),LocalDate.now());
+        auditor.setCreadoPor(authService.getCurrentUser());
+        auditor.setModificadoPor(authService.getCurrentUser());
+        expediente.setAuditor(auditor);
+        // Create the registro
+        Registro registro = new Registro();
+        registro.setDetalle("EXPDTE: " + expedienteDto.getNumero());
+        registro.setTipoRegistro(TipoRegistro.DEBE);
+        Float montoEx = expedienteDto.getMontoSolicitado();
+        if (efector.getRegion().equals(Region.SUBSECRETARIA)){
+            registro.setMonto(montoEx);
+        } else {
+            registro.setMonto(montoEx * 0.60f);
         }
-
-        expediente.setAuditor(new Auditor(LocalDate.now(), LocalDate.now()));
-
+        registro.setFecha(expedienteDto.getFechaExpediente());
+        registro.setEfector(efector);
+        // Save the registro
+        registroRepository.save(registro);
         // Save the expediente
         expedienteRepository.save(expediente);
     }
@@ -70,12 +76,11 @@ public class ExpedienteServiceImpl implements ExpedienteService{
         Auditor auditor = existingExpediente.getAuditor();
 
         // Retrieve the Efector from the database based on the EfectorDTO in the ExpedienteDTO
-        Efector efector = efectorService.getEfectorByCuie(exDto.getEfectorDTOSimplificado().getCuie())
-                .orElseThrow(() -> new ResourceNotFoundException("Efector not found with Cuie: " + exDto.getEfectorDTOSimplificado().getCuie()));
+        Efector efector = efectorService.getEfectorByCuie(exDto.getEfector().getCuie())
+                .orElseThrow(() -> new ResourceNotFoundException("Efector not found with Cuie: " + exDto.getEfector().getCuie()));
 
         // Map fields from DTO to existing Expediente
         ObjectMapper.mapFields(exDto, existingExpediente);
-
         // Check if the Auditor is not null before updating modification date
         if (auditor != null) {
             // Update modification date of the auditor

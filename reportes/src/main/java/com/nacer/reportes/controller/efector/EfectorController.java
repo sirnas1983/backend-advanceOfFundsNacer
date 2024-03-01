@@ -4,6 +4,7 @@ import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.dto.EfectorDTO;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.service.efector.EfectorService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,6 +32,8 @@ public class EfectorController {
         try {
             efectorService.crearEfector(efectorDTO);
             return ResponseEntity.status(HttpStatus.OK).body("Efector creado correctamente");
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (DataIntegrityViolationException e) {
@@ -48,6 +51,8 @@ public class EfectorController {
         try {
             efectorService.actualizarEfector(efectorDTO);
             return ResponseEntity.ok("Efector actualizado correctamente");
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -58,28 +63,32 @@ public class EfectorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EfectorDTO>> getEfectoresPorParametros(
+    public ResponseEntity<?> getEfectoresPorParametros(
             @RequestParam(name = "cuie", required = false) String cuie,
             @RequestParam(name = "region", required = false) String region) {
 
         List<EfectorDTO> efectores = new ArrayList<>();
 
-        if (cuie != null) {
-            // Search by cuie
-            Optional<EfectorDTO> efectorDTO = efectorService.getEfectorDtoPorCuie(cuie);
-            efectorDTO.ifPresent(efectores::add);
-        } else if (region != null) {
-            // Search by region
-            efectores.addAll(efectorService.getEfectoresPorRegion(region));
-        } else {
-            // If no parameter is provided, return all efectores
-            efectores.addAll(efectorService.getTodosLosEfectores());
-        }
-        // Check if the list is empty and return appropriate response
-        if (efectores.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(efectores);
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body(efectores);
+        try {
+            if (cuie != null) {
+                // Search by cuie
+                Optional<EfectorDTO> efectorDTO = efectorService.getEfectorDtoPorCuie(cuie);
+                efectorDTO.ifPresent(efectores::add);
+            } else if (region != null) {
+                // Search by region
+                efectores.addAll(efectorService.getEfectoresPorRegion(region));
+            } else {
+                // If no parameter is provided, return all efectores
+                efectores.addAll(efectorService.getTodosLosEfectores());
+            }
+            // Check if the list is empty and return appropriate response
+            if (efectores.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(efectores);
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(efectores);
+            }
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         }
     }
 

@@ -1,9 +1,12 @@
 package com.nacer.reportes.mapper.expediente;
 
+import com.nacer.reportes.dto.AuditorDTO;
+import com.nacer.reportes.dto.EfectorDTO;
 import com.nacer.reportes.dto.ExpedienteDTO;
 import com.nacer.reportes.mapper.ListMapper;
+import com.nacer.reportes.mapper.ObjectMapper;
 import com.nacer.reportes.mapper.auditor.AuditorMapper;
-import com.nacer.reportes.mapper.efector.EfectorSimplificadoMapper;
+import com.nacer.reportes.mapper.efector.EfectorMapper;
 import com.nacer.reportes.model.Expediente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,21 +19,19 @@ public class ExpedienteMapper {
 
     @Autowired
     private AuditorMapper auditorMapper;
-
-    @Autowired
-    private EfectorSimplificadoMapper efectorSimplificadoMapper;
-
     public ExpedienteDTO mapToExpedienteDTO(Expediente expediente){
         ExpedienteDTO expedienteDTO = new ExpedienteDTO();
         if (!Objects.isNull(expediente)) {
             expedienteDTO.setFechaExpediente(expediente.getFechaExpediente());
             expedienteDTO.setId(expediente.getId());
-            expedienteDTO.setEfectorDTOSimplificado(efectorSimplificadoMapper.mapEfectorToEfectorDTOSimplificado(expediente.getEfector()));
             expedienteDTO.setNombre(expediente.getNombre());
+            EfectorDTO efectorDTO = new EfectorDTO();
+            ObjectMapper.mapFields(expediente.getEfector(), efectorDTO);
+            efectorDTO.setNombre(expediente.getEfector().getNombre());
+            expedienteDTO.setEfector(efectorDTO);
             expedienteDTO.setNumero(expediente.getNumero());
-            expedienteDTO.setUserEmail(expediente.getUser().getEmail());
             expedienteDTO.setMontoSolicitado(expediente.getMontoSolicitado());
-            expedienteDTO.setAuditorDTO(auditorMapper.mapToAuditorDTO(expediente.getAuditor())); //TODO: Map auditor AuditorDTO
+            expedienteDTO.setAuditorDTO(auditorMapper.mapToAuditorDTO(expediente.getAuditor()));
         }
         return expedienteDTO;
     }

@@ -27,7 +27,6 @@ public class UserMapper {
         dto.setUsername(user.getEmail()); // Assuming email is the username
         dto.setEmail(user.getEmail());
         dto.setRoles(user.getRoles().stream().map(Enum::name).collect(Collectors.toList()));
-        dto.setAuditorDTO(auditorMapper.mapToAuditorDTO(user.getAuditor()));
         dto.setValidated(user.isValidated());
         dto.setUnlocked(user.isUnlocked());
         dto.setLastLoginDate(user.getLastLoginDate());

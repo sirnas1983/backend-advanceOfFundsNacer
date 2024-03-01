@@ -1,4 +1,5 @@
 package com.nacer.reportes.security.user;
+
 import com.nacer.reportes.model.User;
 import lombok.Getter;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,14 +13,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Getter
     private UUID id;
-
     private String username;
-
     @Getter
     private String email;
     @JsonIgnore
@@ -39,7 +39,6 @@ public class UserDetailsImpl implements UserDetails {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
-
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),

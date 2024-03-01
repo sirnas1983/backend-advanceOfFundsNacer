@@ -15,17 +15,15 @@ public class AuditorMapper {
             auditorDTO.setId(auditor.getId());
             auditorDTO.setFechaModificacion(auditor.getFechaDeModificacion());
             auditorDTO.setFechaCreacion(auditor.getFechaCreacion());
+            if(!Objects.isNull(auditor.getCreadoPor()) && !Objects.isNull(auditor.getModificadoPor())) {
+                auditorDTO.setCreadoPor(auditor.getCreadoPor().getEmail());
+                auditorDTO.setModificadoPor(auditor.getModificadoPor().getEmail());
+            } else {
+                auditorDTO.setCreadoPor("originDB");
+                auditorDTO.setModificadoPor("originDB");
+            }
         }
         return auditorDTO;
     }
 
-    public Auditor mapToAuditor(AuditorDTO auditorDTO){
-        Auditor auditor= new Auditor();
-        if(!Objects.isNull(auditorDTO)){
-            auditor.setId(auditorDTO.getId());
-            auditor.setFechaDeModificacion(auditorDTO.getFechaModificacion());
-            auditor.setFechaCreacion(auditorDTO.getFechaCreacion());
-        }
-        return auditor;
-    }
 }

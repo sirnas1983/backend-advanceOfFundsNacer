@@ -6,6 +6,7 @@ import com.nacer.reportes.mapper.ObjectMapper;
 import com.nacer.reportes.model.*;
 import com.nacer.reportes.mapper.efector.EfectorMapper;
 import com.nacer.reportes.repository.efector.EfectorRepository;
+import com.nacer.reportes.service.auth.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,9 @@ public class EfectorServiceImpl implements EfectorService{
     private EfectorRepository efectorRepository;
     @Autowired
     private EfectorMapper efectorMapper;
+
+    @Autowired
+    private AuthServiceImpl authService;
 
     @Override
     public Optional<EfectorDTO> getEfectorDtoPorCuie(String cuie) {
@@ -41,7 +45,10 @@ public class EfectorServiceImpl implements EfectorService{
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid region: " + efectorDTO.getRegion().toString());
         }
-        efector.setAuditor(new Auditor(LocalDate.now(),LocalDate.now()));
+        Auditor auditor = new Auditor(LocalDate.now(),LocalDate.now());
+        auditor.setCreadoPor(authService.getCurrentUser());
+        auditor.setModificadoPor(authService.getCurrentUser());
+        efector.setAuditor(auditor);
         efectorRepository.save(efector);
     }
 

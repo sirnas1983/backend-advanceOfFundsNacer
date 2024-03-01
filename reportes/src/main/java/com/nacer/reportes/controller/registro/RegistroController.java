@@ -4,6 +4,7 @@ import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.dto.RegistroDTO;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.service.registro.RegistroService;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @RestController
@@ -31,6 +33,8 @@ public class RegistroController {
             return ResponseEntity.status(HttpStatus.OK).body("Registro creado correctamente");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: revise que no exista registro con ese ID");
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en creación de registro");
         }
@@ -38,13 +42,22 @@ public class RegistroController {
 
     @Secured("ADMIN")
     @GetMapping
-    public ResponseEntity<List<RegistroDTO>> getRegistros() {
-        List<RegistroDTO> registros = registroService.getTodosLosRegistros();
-
-        if (registros.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body(registros);
+    public ResponseEntity<?> getRegistros(
+            @RequestParam(name = "cuie", required = false) @Valid String cuie) {
+        try{
+            List<RegistroDTO> registros;
+            if (Objects.isNull(cuie)) {
+                registros = registroService.getTodosLosRegistros();
+            } else {
+                registros = registroService.getTodosLosRegistrosPorCuie(cuie);
+            }
+            if (registros.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(registros);
+            }
+        } catch (ExpiredJwtException e){
+            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         }
     }
 
@@ -56,6 +69,8 @@ public class RegistroController {
             return ResponseEntity.status(HttpStatus.OK).body("Registro actualizado correctamente");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Registro not found with ID: " + registroDTO.getId());
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en actualización de registro");
         }

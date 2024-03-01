@@ -42,7 +42,6 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toUserWithPassword(userDto);
         user.setRoles(Collections.singletonList(Rol.ADMIN));
-        user.setAuditor(new Auditor(LocalDate.now(), LocalDate.now()));
         userRepository.save(user);
         logger.info("User created successfully: {}", user.getEmail());
     }

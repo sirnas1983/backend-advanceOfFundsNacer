@@ -10,7 +10,7 @@ import com.nacer.reportes.model.Region;
 import com.nacer.reportes.model.Resolucion;
 import com.nacer.reportes.repository.expediente.ExpedienteRepository;
 import com.nacer.reportes.repository.resolucion.ResolucionRepository;
-import com.nacer.reportes.service.user.UserService;
+import com.nacer.reportes.service.auth.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ResolucionServiceImpl implements ResolucionService{
+public class ResolucionServiceImpl implements ResolucionService {
 
     @Autowired
     private ResolucionRepository resolucionRepository;
@@ -34,10 +34,7 @@ public class ResolucionServiceImpl implements ResolucionService{
     private ExpedienteRepository expedienteRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private UserService userService;
+    private AuthServiceImpl authService;
 
     @Override
     public Optional<ResolucionDTO> getResolucionPorNumero(String numero) {
@@ -61,15 +58,29 @@ public class ResolucionServiceImpl implements ResolucionService{
         // Retrieve the original Auditor
         Auditor auditor = existingResolucion.getAuditor();
 
+
+
+
+        // If the id of the existing Expediente differs from the id in the ResolucionDTO
+        if (!existingResolucion.getExpediente().getId().equals(resDto.getExpedienteDTO().getId())) {
+            // Retrieve the new Expediente object based on the id in the ResolucionDTO
+            Expediente newExpediente = expedienteRepository.findById(resDto.getExpedienteDTO().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Expediente not found with id: " + resDto.getExpedienteDTO().getId()));
+            // Set the Resolucion's Expediente to the new Expediente
+            existingResolucion.setExpediente(newExpediente);
+        }
+
         // Map fields from DTO to existing Resolucion
         ObjectMapper.mapFields(resDto, existingResolucion);
 
+        // Update user that modifies Resolucion entity
+        auditor.setModificadoPor(authService.getCurrentUser());
         // Update modification date of the auditor
         auditor.setFechaDeModificacion(LocalDate.now());
-
         // Set the updated Auditor back to the Resolucion
         existingResolucion.setAuditor(auditor);
-
+        // Update the nombre field
+        existingResolucion.setNombre(resDto.getNombre());
         // Save the updated Resolucion entity
         resolucionRepository.save(existingResolucion);
     }
@@ -91,10 +102,11 @@ public class ResolucionServiceImpl implements ResolucionService{
 
         Resolucion resolucion = resolucionMapper.mapToResolucion(resDto);
         // Set the authenticated user to the expediente
-        resolucion.setUser(userService.getUserByEmail(userEmail)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail)));
 
-        resolucion.setAuditor(new Auditor(LocalDate.now(), LocalDate.now()));
+        Auditor auditor = new Auditor(LocalDate.now(), LocalDate.now());
+        auditor.setCreadoPor(authService.getCurrentUser());
+        resolucion.setAuditor(auditor);
+
         resolucion.setExpediente(exp);
         resolucionRepository.save(resolucion);
     }
@@ -112,7 +124,7 @@ public class ResolucionServiceImpl implements ResolucionService{
 
             return resolucionMapper.mapToListResolucionDTO(
                     resolucionRepository.findByRegion(regionEnum));
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("No se encontró Region " + region);
         }
     }

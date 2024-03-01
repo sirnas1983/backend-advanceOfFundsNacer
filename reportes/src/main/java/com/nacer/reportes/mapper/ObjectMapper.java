@@ -10,8 +10,15 @@ import java.util.List;
 public class ObjectMapper {
 
     public static <T, U> void mapFields(T source, U destination) {
-        Field[] sourceFields = source.getClass().getDeclaredFields();
-        Field[] destinationFields = destination.getClass().getDeclaredFields();
+        if (source == null || destination == null) {
+            return;
+        }
+
+        Class<?> sourceClass = source.getClass();
+        Class<?> destinationClass = destination.getClass();
+
+        List<Field> sourceFields = getAllFields(sourceClass);
+        List<Field> destinationFields = getAllFields(destinationClass);
 
         for (Field sourceField : sourceFields) {
             for (Field destinationField : destinationFields) {
@@ -30,5 +37,16 @@ public class ObjectMapper {
                 }
             }
         }
+    }
+
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        while (clazz != null) {
+            for (Field field : clazz.getDeclaredFields()) {
+                fields.add(field);
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return fields;
     }
 }

@@ -1,10 +1,7 @@
 package com.nacer.reportes.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -22,14 +19,14 @@ public class Registro {
     private UUID id;
     private LocalDate fecha;
     private Float monto;
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn (name = "efector")
     private Efector efector;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Auditor auditor;
     @Enumerated(EnumType.STRING)
     private TipoRegistro tipoRegistro;
     private String detalle;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by")
-    private User createdBy;
+
 
 }

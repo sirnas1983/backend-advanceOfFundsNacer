@@ -28,13 +28,12 @@ public class EfectorMapper {
         EfectorDTO efectorDTO = new EfectorDTO();
         if (!Objects.isNull(efector)){
             efectorDTO.setId(efector.getId());
-            efectorDTO.setCuie(efector.getCuie());
             efectorDTO.setNombre(efector.getNombre());
-            efectorDTO.setExpedientes(expedienteMapper.mapToListExpedienteDTO(efector.getExpedientes())); //TODO: pasar expedientes a ExpedientesDTO
+            efectorDTO.setCuie(efector.getCuie());
             efectorDTO.setRegion(efector.getRegion());
-            efectorDTO.setRegistros(registroMapper.mapToListRegistrosDTO(efector.getRegistros())); //TODO: pasar registros
-            efectorDTO.setPartidaPersupestaria(efector.getPartidaPersupestaria());
             efectorDTO.setAuditorDTO(auditorMapper.mapToAuditorDTO(efector.getAuditor()));
+            // Calculate derived properties
+            efectorDTO.calculateDerivedProperties(efector.getTotalHaber(), efector.getTotalDebe());
         }
         return efectorDTO;
     }
@@ -46,7 +45,6 @@ public class EfectorMapper {
             efector.setCuie(efectorDTO.getCuie());
             efector.setNombre(efectorDTO.getNombre());
             efector.setRegion(efectorDTO.getRegion());
-            efector.setPartidaPersupestaria(efectorDTO.getPartidaPersupestaria());
         }
         return efector;
     }

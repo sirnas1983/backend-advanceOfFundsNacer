@@ -24,7 +24,6 @@ public class RegistroMapper {
             registroDTO.setDetalle(registro.getDetalle());
             registroDTO.setMonto(registro.getMonto());
             registroDTO.setEfectorCuie(registro.getEfector().getCuie());
-            registroDTO.setCreatedBy(registro.getCreatedBy().getEmail());
         }
         return registroDTO;
     }

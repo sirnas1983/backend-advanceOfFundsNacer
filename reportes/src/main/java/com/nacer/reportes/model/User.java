@@ -24,16 +24,17 @@ import java.util.stream.Collectors;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends EntidadNacer implements UserDetails {
+public class User implements UserDetails {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private String email;
     private String password;
     private LocalDateTime lastLoginDate; // Last login date
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<Rol> roles = new ArrayList<>();
-
-
     public User(String email, String password) {
         this.email = email;
         this.password = encodePassword(password);
