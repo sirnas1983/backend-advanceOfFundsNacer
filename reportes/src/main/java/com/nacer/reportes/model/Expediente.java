@@ -17,12 +17,12 @@ public class Expediente extends EntidadNacer{
 
     @Column(unique = true)
     private String numero;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "efector")
     private Efector efector;
-    @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Registro registro;
-    private Float montoSolicitado;
+    private Double montoSolicitado;
     private LocalDate fechaExpediente;
 
 }

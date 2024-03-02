@@ -2,10 +2,10 @@ package com.nacer.reportes.controller.expediente;
 
 import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.dto.ExpedienteDTO;
+import com.nacer.reportes.exceptions.ExpiredJwtAuthenticationException;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.service.efector.EfectorService;
 import com.nacer.reportes.service.expediente.ExpedienteService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -43,7 +43,7 @@ public class ExpedienteController {
             return ResponseEntity.status(HttpStatus.OK).body("Expediente creado correctamente");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: revise que no exista expediente con ese Numero");
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtAuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en creación de expediente");
@@ -82,7 +82,7 @@ public class ExpedienteController {
                 return ResponseEntity.status(HttpStatus.OK).body(expedientes);
             }
         } catch (
-        ExpiredJwtException e) {
+        ExpiredJwtAuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         }
     }
@@ -94,7 +94,7 @@ public class ExpedienteController {
             return ResponseEntity.ok("Resolucion actualizada correctamente");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resolucion no encontrada con ID: " + exDto.getId());
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtAuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la resolucion");

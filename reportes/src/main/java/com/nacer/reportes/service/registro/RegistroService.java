@@ -10,7 +10,7 @@ import java.util.List;
 public interface RegistroService {
 
 
-    List<RegistroDTO> getTodosLosRegistrosPorCuie(String cuie);
+    List<RegistroDTO> getTodosLosRegistrosPorCuie(String cuie, String tipo);
 
     void crearRegistro(RegistroDTO registroDTO);
 

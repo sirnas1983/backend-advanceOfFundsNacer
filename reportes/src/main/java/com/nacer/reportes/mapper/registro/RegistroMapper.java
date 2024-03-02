@@ -23,7 +23,6 @@ public class RegistroMapper {
             registroDTO.setId(registro.getId());
             registroDTO.setDetalle(registro.getDetalle());
             registroDTO.setMonto(registro.getMonto());
-            registroDTO.setEfectorCuie(registro.getEfector().getCuie());
         }
         return registroDTO;
     }

@@ -19,11 +19,10 @@ public class RegistroDTO {
 
     private UUID id;
     private LocalDate fecha;
-    private Float monto;
+    private Double monto;
     private String detalle;
     private TipoRegistro tipoRegistro;
     private String efectorCuie;
-    private String createdBy; // Email of the user who created the registro
 
 }
 

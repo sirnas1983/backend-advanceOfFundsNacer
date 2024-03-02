@@ -3,10 +3,9 @@ package com.nacer.reportes.controller.resolucion;
 
 import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.dto.ResolucionDTO;
+import com.nacer.reportes.exceptions.ExpiredJwtAuthenticationException;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
-import com.nacer.reportes.repository.resolucion.ResolucionRepository;
 import com.nacer.reportes.service.resolucion.ResolucionService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,11 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(value = ApiConstants.BASE_URL + "/resoluciones", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -75,7 +72,7 @@ public class ResolucionController {
             } else {
                 return ResponseEntity.status(HttpStatus.OK).body(resoluciones);
             }
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtAuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         }
     }
@@ -87,7 +84,7 @@ public class ResolucionController {
             return ResponseEntity.ok("Resolucion actualizada correctamente");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtAuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la resolucion");

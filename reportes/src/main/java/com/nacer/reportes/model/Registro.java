@@ -18,11 +18,11 @@ public class Registro {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private LocalDate fecha;
-    private Float monto;
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private Double monto;
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn (name = "efector")
     private Efector efector;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Auditor auditor;
     @Enumerated(EnumType.STRING)
     private TipoRegistro tipoRegistro;

@@ -2,9 +2,9 @@ package com.nacer.reportes.controller.efector;
 
 import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.dto.EfectorDTO;
+import com.nacer.reportes.exceptions.ExpiredJwtAuthenticationException;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.service.efector.EfectorService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,7 +32,7 @@ public class EfectorController {
         try {
             efectorService.crearEfector(efectorDTO);
             return ResponseEntity.status(HttpStatus.OK).body("Efector creado correctamente");
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtAuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -51,7 +51,7 @@ public class EfectorController {
         try {
             efectorService.actualizarEfector(efectorDTO);
             return ResponseEntity.ok("Efector actualizado correctamente");
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtAuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -87,7 +87,7 @@ public class EfectorController {
             } else {
                 return ResponseEntity.status(HttpStatus.OK).body(efectores);
             }
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtAuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         }
     }

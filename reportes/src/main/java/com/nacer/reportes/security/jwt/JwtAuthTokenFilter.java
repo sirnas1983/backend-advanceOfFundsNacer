@@ -2,6 +2,7 @@ package com.nacer.reportes.security.jwt;
 
 import java.io.IOException;
 
+import com.nacer.reportes.exceptions.ExpiredJwtAuthenticationException;
 import com.nacer.reportes.security.user.UserDetailsServiceImpl;
 
 import jakarta.servlet.FilterChain;

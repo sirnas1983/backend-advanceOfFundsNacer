@@ -3,13 +3,13 @@ package com.nacer.reportes.controller.user;
 import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.dto.UserDTO;
 import com.nacer.reportes.dto.AuthenticationUserDto;
+import com.nacer.reportes.exceptions.ExpiredJwtAuthenticationException;
 import com.nacer.reportes.model.AuthenticationRequest;
 import com.nacer.reportes.security.jwt.JwtUtils;
 import com.nacer.reportes.security.jwt.TokenBlacklistService;
 import com.nacer.reportes.security.user.AuthenticationService;
 import com.nacer.reportes.service.user.UserService;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public class UserController {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
                 }
             }
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtAuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
         }
     }
@@ -95,7 +95,7 @@ public class UserController {
             try {
                 String jwtToken = JwtUtils.extractTokenFromRequest(request);
                 tokenBlacklistService.blacklistToken(jwtToken);
-            } catch (ExpiredJwtException e) {
+            } catch (ExpiredJwtAuthenticationException e) {
                 return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
             } catch (Exception e) {
                 // Return error response

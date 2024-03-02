@@ -19,7 +19,7 @@ public class ExpedienteDTO {
     private String nombre;
     private String numero;
     private EfectorDTO efector;
-    private Float montoSolicitado;
+    private Double montoSolicitado;
     private LocalDate fechaExpediente;
     private AuditorDTO auditorDTO;
 }

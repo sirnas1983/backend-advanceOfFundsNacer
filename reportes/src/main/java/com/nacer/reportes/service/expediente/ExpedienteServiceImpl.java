@@ -50,12 +50,13 @@ public class ExpedienteServiceImpl implements ExpedienteService{
         Registro registro = new Registro();
         registro.setDetalle("EXPDTE: " + expedienteDto.getNumero());
         registro.setTipoRegistro(TipoRegistro.DEBE);
-        Float montoEx = expedienteDto.getMontoSolicitado();
+        Double montoEx = expedienteDto.getMontoSolicitado();
         if (efector.getRegion().equals(Region.SUBSECRETARIA)){
             registro.setMonto(montoEx);
         } else {
-            registro.setMonto(montoEx * 0.60f);
+            registro.setMonto(montoEx * 0.60);
         }
+        registro.setAuditor(auditor);
         registro.setFecha(expedienteDto.getFechaExpediente());
         expediente.setRegistro(registro);
         // Save the expediente
@@ -75,13 +76,30 @@ public class ExpedienteServiceImpl implements ExpedienteService{
         Efector efector = efectorService.getEfectorByCuie(exDto.getEfector().getCuie())
                 .orElseThrow(() -> new ResourceNotFoundException("Efector not found with Cuie: " + exDto.getEfector().getCuie()));
 
+        // Retrieve registro from existingExpediente
+        Registro registro = existingExpediente.getRegistro();
+
+        // Modify registro if changes detected in monto
+        if (!Objects.equals(exDto.getMontoSolicitado(), existingExpediente.getMontoSolicitado())) {
+            double monto = efector.getRegion().equals(Region.SUBSECRETARIA) ?
+                    exDto.getMontoSolicitado() : exDto.getMontoSolicitado() * 0.60;
+            monto = Math.round(monto * 100) /100.0;
+            registro.setMonto(monto);
+            registro.getAuditor().setFechaDeModificacion(LocalDate.now());
+            registro.getAuditor().setModificadoPor(authService.getCurrentUser());
+        }
+
         // Map fields from DTO to existing Expediente
         ObjectMapper.mapFields(exDto, existingExpediente);
+
         // Check if the Auditor is not null before updating modification date
         if (auditor != null) {
             // Update modification date of the auditor
             auditor.setFechaDeModificacion(LocalDate.now());
         }
+
+        // Set registro to expediente
+        existingExpediente.setRegistro(registro);
 
         // Set the Efector in the Expediente
         existingExpediente.setEfector(efector);
@@ -92,6 +110,7 @@ public class ExpedienteServiceImpl implements ExpedienteService{
         // Save the updated Expediente entity
         expedienteRepository.save(existingExpediente);
     }
+
 
     @Override
     public Optional<ExpedienteDTO> getExpedientePorNumEx(String numEx) {

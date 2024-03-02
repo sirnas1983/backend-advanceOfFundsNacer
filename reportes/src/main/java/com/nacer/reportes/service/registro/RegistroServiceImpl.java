@@ -40,7 +40,7 @@ public class RegistroServiceImpl implements RegistroService {
     }
 
     @Override
-    public List<RegistroDTO> getTodosLosRegistrosPorCuie(String cuie) {
+    public List<RegistroDTO> getTodosLosRegistrosPorCuie(String cuie, String tipo) {
         List<Registro> registros = registroRepository.findByCuie(cuie);
         return registroMapper.mapToListRegistrosDTO(registros);
     }

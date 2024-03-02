@@ -3,6 +3,8 @@ package com.nacer.reportes.security.config;
 import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.security.jwt.GenerateJwtToken;
 import com.nacer.reportes.security.jwt.JwtAuthTokenFilter;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.crypto.SecretKey;
+
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +30,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
 
+    @Bean
+    public SecretKey secretKey() {
+        return Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
