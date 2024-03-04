@@ -7,6 +7,7 @@ import com.nacer.reportes.mapper.ListMapper;
 import com.nacer.reportes.mapper.ObjectMapper;
 import com.nacer.reportes.mapper.auditor.AuditorMapper;
 import com.nacer.reportes.mapper.efector.EfectorMapper;
+import com.nacer.reportes.model.Efector;
 import com.nacer.reportes.model.Expediente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ public class ExpedienteMapper {
             expedienteDTO.setId(expediente.getId());
             expedienteDTO.setNombre(expediente.getNombre());
             EfectorDTO efectorDTO = new EfectorDTO();
+            Efector efector = expediente.getEfector();
             ObjectMapper.mapFields(expediente.getEfector(), efectorDTO);
             efectorDTO.setNombre(expediente.getEfector().getNombre());
             expedienteDTO.setEfector(efectorDTO);

@@ -56,6 +56,7 @@ public class ExpedienteServiceImpl implements ExpedienteService{
         } else {
             registro.setMonto(montoEx * 0.60);
         }
+        registro.setEfector(efector);
         registro.setAuditor(auditor);
         registro.setFecha(expedienteDto.getFechaExpediente());
         expediente.setRegistro(registro);
