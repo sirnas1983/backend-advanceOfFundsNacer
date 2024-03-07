@@ -5,7 +5,7 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/planNacer?createDatabaseIfNotExist=true
     username: root
-    password:
+    password: root
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.MySQLInnoDBDialect
@@ -13,7 +13,6 @@ spring:
     generate-ddl: true
     show-sql: true
 jwt:
-  secret: "$%23452#%"#452#%3245FgsdfgadsfasADFqerqe"
   expirationMs: 3600000
 jjwt:
   version: 0.11.5

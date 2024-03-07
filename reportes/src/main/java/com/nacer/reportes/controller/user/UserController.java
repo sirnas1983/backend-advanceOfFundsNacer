@@ -1,6 +1,7 @@
 package com.nacer.reportes.controller.user;
 
 import com.nacer.reportes.constants.ApiConstants;
+import com.nacer.reportes.dto.ResponseWrapper;
 import com.nacer.reportes.dto.UserDTO;
 import com.nacer.reportes.dto.AuthenticationUserDto;
 import com.nacer.reportes.exceptions.ExpiredJwtAuthenticationException;
@@ -52,57 +53,38 @@ public class UserController {
     @GetMapping
     @Secured("ADMIN")
     @ResponseBody
-    public ResponseEntity<?> getUsers(
+    public ResponseEntity<ResponseWrapper<?>> getUsers(
             @RequestParam(name="id", required = false)
             @Valid UUID id) {
-        try {
-            if (Objects.isNull(id)) {
-                // If no ID is provided, return all users
-                List<UserDTO> userDTOs = userService.getUsers();
-                return ResponseEntity.ok(userDTOs);
-            } else {
-                // Find the user by ID
-                Optional<UserDTO> userOptional = userService.getUser(id);
-                if (userOptional.isPresent()) {
-                    // If the user is found, return it in the response body
-                    return ResponseEntity.ok(userOptional.get());
-                } else {
-                    // If the user is not found, return a 404 Not Found response with an error message
-                    String errorMessage = "User with ID " + id + " not found";
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
-                }
-            }
-        } catch (ExpiredJwtAuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
+        if (Objects.isNull(id)) {
+            // If no ID is provided, return all users
+            List<UserDTO> userDTOs = userService.getUsers();
+            return ResponseEntity.ok(new ResponseWrapper<>(HttpStatus.OK.value(), "Success", userDTOs));
+        } else {
+            // Find the user by ID
+            Optional<UserDTO> userOptional = userService.getUser(id);
+            // If the user is found, return it in the response body
+            // If the user is not found, return a 404 Not Found response with an error message
+            return userOptional.<ResponseEntity<ResponseWrapper<?>>>map(userDTO ->
+                    ResponseEntity.ok(new ResponseWrapper<>(HttpStatus.OK.value(),
+                            "Success", userDTO))).orElseGet(
+                                    () -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseWrapper<>(HttpStatus.NOT_FOUND.value(), "User not found", null)));
         }
     }
+
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest request) {
-        try {
-            // Authenticate user
-            String jwtToken = authenticationService.authenticateUser(request.getEmail(), request.getPassword());
-            // Return authentication token in the response body
-            return ResponseEntity.ok(Map.of("token", jwtToken));
-        } catch (AuthenticationException e) {
-            // Return a detailed error response with an explanatory message
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Invalid email or password");
-        }
+    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest request) throws AuthenticationException {
+        // Authenticate user
+        String jwtToken = authenticationService.authenticateUser(request.getEmail(), request.getPassword());
+        // Return authentication token in the response body
+        return ResponseEntity.ok(Map.of("token", jwtToken));
     }
+
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
-            // Extract JWT token from the request
-            try {
-                String jwtToken = JwtUtils.extractTokenFromRequest(request);
-                tokenBlacklistService.blacklistToken(jwtToken);
-            } catch (ExpiredJwtAuthenticationException e) {
-                return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Sesion vencida. Inicie sesion nuevamente.");
-            } catch (Exception e) {
-                // Return error response
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Error processing logout");
-            }
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body("Logged out successfully");
+    public ResponseEntity<ResponseWrapper<?>> logout(HttpServletRequest request) {
+        String jwtToken = JwtUtils.extractTokenFromRequest(request);
+        tokenBlacklistService.blacklistToken(jwtToken);
+        return ResponseEntity.ok(new ResponseWrapper<>(HttpStatus.OK.value(), "Logged out successfully", null));
     }
 }
