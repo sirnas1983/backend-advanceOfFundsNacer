@@ -25,6 +25,7 @@ public class EfectorDTO {
     private Double totalHaber;
     private Double totalDebe;
     private Double saldo;
+    private String descripcion;
 
     // Method to calculate derived properties based on the fetched data
     public void calculateDerivedProperties(Double totalHaber, Double totalDebe) {

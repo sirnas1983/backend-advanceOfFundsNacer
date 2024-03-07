@@ -22,5 +22,7 @@ public class ResolucionDTO {
     private Float montoOtorgado;
     private LocalDate fechaResolucion;
     private AuditorDTO auditorDTO;
+    private String descripcion;
+
 
 }

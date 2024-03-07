@@ -23,6 +23,8 @@ public class RegistroDTO {
     private String detalle;
     private TipoRegistro tipoRegistro;
     private String efectorCuie;
+    private String descripcion;
+
 
 }
 

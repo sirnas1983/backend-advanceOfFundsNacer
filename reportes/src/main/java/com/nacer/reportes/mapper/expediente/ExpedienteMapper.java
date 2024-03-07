@@ -32,6 +32,7 @@ public class ExpedienteMapper {
             efectorDTO.setNombre(expediente.getEfector().getNombre());
             expedienteDTO.setEfector(efectorDTO);
             expedienteDTO.setNumero(expediente.getNumero());
+            expedienteDTO.setDescripcion(expediente.getDescripcion());
             expedienteDTO.setMontoSolicitado(expediente.getMontoSolicitado());
             expedienteDTO.setAuditorDTO(auditorMapper.mapToAuditorDTO(expediente.getAuditor()));
         }
@@ -46,6 +47,8 @@ public class ExpedienteMapper {
             expediente.setNombre(expedienteDTO.getNombre());
             expediente.setNumero(expedienteDTO.getNumero());
             expediente.setMontoSolicitado(expedienteDTO.getMontoSolicitado());
+            expediente.setDescripcion(expedienteDTO.getDescripcion());
+
         }
         return expediente;
     }

@@ -33,6 +33,7 @@ public class EfectorMapper {
             efectorDTO.setRegion(efector.getRegion());
             efectorDTO.setAuditorDTO(auditorMapper.mapToAuditorDTO(efector.getAuditor()));
             // Calculate derived properties
+            efectorDTO.setDescripcion(efectorDTO.getDescripcion());
             efectorDTO.calculateDerivedProperties(efector.getTotalHaber(), efector.getTotalDebe());
         }
         return efectorDTO;
@@ -45,6 +46,7 @@ public class EfectorMapper {
             efector.setCuie(efectorDTO.getCuie());
             efector.setNombre(efectorDTO.getNombre());
             efector.setRegion(efectorDTO.getRegion());
+            efector.setDescripcion(efectorDTO.getDescripcion());
         }
         return efector;
     }

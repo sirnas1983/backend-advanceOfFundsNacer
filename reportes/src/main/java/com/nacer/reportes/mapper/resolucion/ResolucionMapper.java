@@ -27,6 +27,7 @@ public class ResolucionMapper {
             resolucionDTO.setExpedienteDTO(expedienteMapper.mapToExpedienteDTO(resolucion.getExpediente()));
             resolucionDTO.setMontoOtorgado(resolucion.getMontoOtorgado());
             resolucionDTO.setFechaResolucion(resolucion.getFechaResolucion());
+            resolucionDTO.setDescripcion(resolucion.getDescripcion());
 
         }
         return resolucionDTO;
@@ -41,6 +42,7 @@ public class ResolucionMapper {
             resolucion.setExpediente(new Expediente());
             resolucion.setMontoOtorgado(resolucionDTO.getMontoOtorgado());
             resolucion.setFechaResolucion(resolucionDTO.getFechaResolucion());
+            resolucion.setDescripcion(resolucionDTO.getDescripcion());
         }
         return resolucion;
     }

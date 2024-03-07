@@ -20,4 +20,6 @@ public class EntidadNacer {
     protected String nombre;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     protected Auditor auditor;
+    private String descripcion;
+
 }

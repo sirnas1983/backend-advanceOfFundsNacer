@@ -22,4 +22,6 @@ public class ExpedienteDTO {
     private Double montoSolicitado;
     private LocalDate fechaExpediente;
     private AuditorDTO auditorDTO;
+    private String descripcion;
+
 }
