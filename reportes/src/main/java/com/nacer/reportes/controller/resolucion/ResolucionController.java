@@ -3,6 +3,7 @@ package com.nacer.reportes.controller.resolucion;
 import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.dto.ResolucionDTO;
 import com.nacer.reportes.dto.ResponseWrapper;
+import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.service.resolucion.ResolucionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +44,11 @@ public class ResolucionController {
         if (numRe != null) {
             // Search by numeroResolucion
             Optional<ResolucionDTO> resolucionDTO = resolucionService.getResolucionPorNumero(numRe);
-            resolucionDTO.ifPresent(resoluciones::add);
+            resoluciones.add(resolucionDTO.orElseThrow(() -> new ResourceNotFoundException("No se encontró resolucion con número: " + numRe)));
         } else if (numEx != null) {
             // Search by numEx
             Optional<ResolucionDTO> resolucionDTO = resolucionService.getResolucionPorNumEx(numEx);
-            resolucionDTO.ifPresent(resoluciones::add);
+            resoluciones.add(resolucionDTO.orElseThrow(() -> new ResourceNotFoundException("No se encontró resolucion con número de expdiente: " + numEx)));
         } else if (cuie != null) {
             // Search by cuie
             resoluciones.addAll(resolucionService.getResolucionPorEfector(cuie));

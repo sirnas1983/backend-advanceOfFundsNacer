@@ -86,10 +86,11 @@ public class EfectorServiceImpl implements EfectorService{
         // Set the original values
         existingEfector.setRegistros(originalRegistros);
         existingEfector.setExpedientes(originalExpedientes);
-        existingEfector.setAuditor(originalAuditor);
 
         // Update modification date of the auditor
-        existingEfector.getAuditor().setFechaDeModificacion(LocalDate.now());
+        originalAuditor.setFechaDeModificacion(LocalDate.now());
+        originalAuditor.setModificadoPor(authService.getCurrentUser());
+        existingEfector.setAuditor(originalAuditor);
 
         // Save the updated Efector entity back to the repository
         efectorRepository.save(existingEfector);
