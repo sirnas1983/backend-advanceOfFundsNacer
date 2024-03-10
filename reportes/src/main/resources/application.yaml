@@ -1,11 +1,11 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/planNacer?createDatabaseIfNotExist=true
-    username: root
-    password: root
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.MySQLInnoDBDialect
@@ -14,5 +14,4 @@ spring:
     show-sql: true
 jwt:
   expirationMs: 3600000
-jjwt:
-  version: 0.11.5
+

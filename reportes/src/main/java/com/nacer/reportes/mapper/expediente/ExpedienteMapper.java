@@ -53,6 +53,19 @@ public class ExpedienteMapper {
         return expediente;
     }
 
+    public Expediente mergeToExpediente(ExpedienteDTO expedienteDTO, Expediente expediente){
+        if (!Objects.isNull(expedienteDTO)) {
+            expediente.setFechaExpediente(expedienteDTO.getFechaExpediente());
+            expediente.setId(expedienteDTO.getId());
+            expediente.setNombre(expedienteDTO.getNombre());
+            expediente.setNumero(expedienteDTO.getNumero());
+            expediente.setMontoSolicitado(expedienteDTO.getMontoSolicitado());
+            expediente.setDescripcion(expedienteDTO.getDescripcion());
+
+        }
+        return expediente;
+    }
+
 
 
     public List<Expediente> mapToListExpediente(List<ExpedienteDTO> listaExpedienteDTO) {

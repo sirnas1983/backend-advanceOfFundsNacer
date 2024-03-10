@@ -2,16 +2,12 @@ package com.nacer.reportes.service.expediente;
 
 import com.nacer.reportes.dto.ExpedienteDTO;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
-import com.nacer.reportes.mapper.ObjectMapper;
 import com.nacer.reportes.mapper.expediente.ExpedienteMapper;
 import com.nacer.reportes.model.*;
 import com.nacer.reportes.repository.expediente.ExpedienteRepository;
-import com.nacer.reportes.repository.registro.RegistroRepository;
 import com.nacer.reportes.service.efector.EfectorService;
 import com.nacer.reportes.service.auth.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -91,7 +87,7 @@ public class ExpedienteServiceImpl implements ExpedienteService{
         }
 
         // Map fields from DTO to existing Expediente
-        ObjectMapper.mapFields(exDto, existingExpediente);
+        existingExpediente = expedienteMapper.mergeToExpediente(exDto, existingExpediente);
 
         // Check if the Auditor is not null before updating modification date
         if (auditor != null) {
