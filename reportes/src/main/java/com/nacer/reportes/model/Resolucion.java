@@ -19,6 +19,8 @@ public class Resolucion extends EntidadNacer{
     private Expediente expediente;
     private Float montoOtorgado;
     private LocalDate fechaResolucion;
+    @Column(columnDefinition = "boolean default false")
+    private boolean isFondosRendidos;
 
 
 }

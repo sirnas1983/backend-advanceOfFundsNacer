@@ -28,6 +28,7 @@ public class ResolucionMapper {
             resolucionDTO.setMontoOtorgado(resolucion.getMontoOtorgado());
             resolucionDTO.setFechaResolucion(resolucion.getFechaResolucion());
             resolucionDTO.setDescripcion(resolucion.getDescripcion());
+            resolucionDTO.setFondosRendidos(resolucion.isFondosRendidos());
 
         }
         return resolucionDTO;
@@ -43,6 +44,8 @@ public class ResolucionMapper {
             resolucion.setMontoOtorgado(resolucionDTO.getMontoOtorgado());
             resolucion.setFechaResolucion(resolucionDTO.getFechaResolucion());
             resolucion.setDescripcion(resolucionDTO.getDescripcion());
+            resolucion.setFondosRendidos(resolucionDTO.isFondosRendidos());
+
         }
         return resolucion;
     }

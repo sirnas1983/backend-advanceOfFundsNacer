@@ -1,6 +1,5 @@
 package com.nacer.reportes.dto;
 
-import com.nacer.reportes.model.Expediente;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +22,7 @@ public class ResolucionDTO {
     private LocalDate fechaResolucion;
     private AuditorDTO auditorDTO;
     private String descripcion;
+    private boolean isFondosRendidos;
 
 
 }
