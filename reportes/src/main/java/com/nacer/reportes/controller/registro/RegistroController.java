@@ -46,15 +46,11 @@ public class RegistroController {
         } else {
             registros = registroService.getTodosLosRegistrosPorCuie(cuie, tipo);
         }
-        if (registros.isEmpty()) {
-            throw new ResourceNotFoundException("No se encontraron registros");
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseWrapper<>(HttpStatus.OK.value(),
-                            "Registros encontrados",
-                            registros)
-            );
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseWrapper<>(HttpStatus.OK.value(),
+                        "Registros encontrados",
+                        registros)
+        );
     }
 
     @Secured("ADMIN")

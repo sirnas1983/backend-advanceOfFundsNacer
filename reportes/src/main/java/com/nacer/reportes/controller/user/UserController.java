@@ -35,6 +35,8 @@ public class UserController {
     TokenBlacklistService tokenBlacklistService;
 
     @PostMapping
+    @Secured("ADMIN")
+    @ResponseBody
     public ResponseEntity<String> createUser(@RequestBody @Valid AuthenticationUserDto userDTO) {
         // Check if a user with the provided email already exists
         if (userService.existsByEmail(userDTO.getEmail())) {

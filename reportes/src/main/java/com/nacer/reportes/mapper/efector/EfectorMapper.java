@@ -24,17 +24,41 @@ public class EfectorMapper {
     @Autowired
     private ExpedienteMapper expedienteMapper;
 
-    public EfectorDTO mapToEfectorDTO(Efector efector){
+    public EfectorDTO mapToEfectorCompletoDTO(Efector efector){
+        EfectorDTO efectorDTO = new EfectorDTO();
+        if (!Objects.isNull(efector)){
+            efectorDTO.setId(efector.getId());
+            efectorDTO.setNombre(efector.getNombre());
+            efectorDTO.setCuie(efector.getCuie());
+            efectorDTO.setAuditorDTO(auditorMapper.mapToAuditorDTO(efector.getAuditor()));
+            efectorDTO.setRegion(efector.getRegion());
+            efectorDTO.setDescripcion(efector.getDescripcion());
+            // Verificar si totalDebe y totalHaber no son nulos antes de calcular el saldo
+            Double totalDebe = (efector.getTotalDebe() != null) ? efector.getTotalDebe() : 0.0;
+            Double totalHaber = (efector.getTotalHaber() != null) ? efector.getTotalHaber() : 0.0;
+
+            efectorDTO.setTotalDebe(totalDebe);
+            efectorDTO.setTotalHaber(totalHaber);
+            efectorDTO.setSaldo(totalHaber - totalDebe);
+        }
+        return efectorDTO;
+    }
+
+    public EfectorDTO mapToEfectorSimpleDTO(Efector efector){
         EfectorDTO efectorDTO = new EfectorDTO();
         if (!Objects.isNull(efector)){
             efectorDTO.setId(efector.getId());
             efectorDTO.setNombre(efector.getNombre());
             efectorDTO.setCuie(efector.getCuie());
             efectorDTO.setRegion(efector.getRegion());
-            efectorDTO.setAuditorDTO(auditorMapper.mapToAuditorDTO(efector.getAuditor()));
-            // Calculate derived properties
             efectorDTO.setDescripcion(efector.getDescripcion());
-            efectorDTO.calculateDerivedProperties(efector.getTotalHaber(), efector.getTotalDebe());
+            // Verificar si totalDebe y totalHaber no son nulos antes de calcular el saldo
+            Double totalDebe = (efector.getTotalDebe() != null) ? efector.getTotalDebe() : 0.0;
+            Double totalHaber = (efector.getTotalHaber() != null) ? efector.getTotalHaber() : 0.0;
+
+            efectorDTO.setTotalDebe(totalDebe);
+            efectorDTO.setTotalHaber(totalHaber);
+            efectorDTO.setSaldo(totalHaber - totalDebe);
         }
         return efectorDTO;
     }
@@ -56,7 +80,7 @@ public class EfectorMapper {
     }
 
     public List<EfectorDTO> mapToListEfectorDTO(List<Efector> listaEfector) {
-        return ListMapper.mapListaToLista(listaEfector, this::mapToEfectorDTO);
+        return ListMapper.mapListaToLista(listaEfector, this::mapToEfectorSimpleDTO);
     }
 
 }

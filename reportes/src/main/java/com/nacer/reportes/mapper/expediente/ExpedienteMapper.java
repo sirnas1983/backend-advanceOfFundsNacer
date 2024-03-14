@@ -1,12 +1,10 @@
 package com.nacer.reportes.mapper.expediente;
 
-import com.nacer.reportes.dto.AuditorDTO;
 import com.nacer.reportes.dto.EfectorDTO;
 import com.nacer.reportes.dto.ExpedienteDTO;
 import com.nacer.reportes.mapper.ListMapper;
 import com.nacer.reportes.mapper.ObjectMapper;
 import com.nacer.reportes.mapper.auditor.AuditorMapper;
-import com.nacer.reportes.mapper.efector.EfectorMapper;
 import com.nacer.reportes.model.Efector;
 import com.nacer.reportes.model.Expediente;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +26,11 @@ public class ExpedienteMapper {
             expedienteDTO.setNombre(expediente.getNombre());
             EfectorDTO efectorDTO = new EfectorDTO();
             Efector efector = expediente.getEfector();
-            ObjectMapper.mapFields(expediente.getEfector(), efectorDTO);
+            efectorDTO.setCuie(efector.getCuie());
+            efectorDTO.setNombre(efector.getNombre());
+            efectorDTO.setId(efector.getId());
             efectorDTO.setNombre(expediente.getEfector().getNombre());
-            expedienteDTO.setEfector(efectorDTO);
+            expedienteDTO.setEfectorDTO(efectorDTO);
             expedienteDTO.setNumero(expediente.getNumero());
             expedienteDTO.setDescripcion(expediente.getDescripcion());
             expedienteDTO.setMontoSolicitado(expediente.getMontoSolicitado());
@@ -48,7 +48,6 @@ public class ExpedienteMapper {
             expediente.setNumero(expedienteDTO.getNumero());
             expediente.setMontoSolicitado(expedienteDTO.getMontoSolicitado());
             expediente.setDescripcion(expedienteDTO.getDescripcion());
-
         }
         return expediente;
     }

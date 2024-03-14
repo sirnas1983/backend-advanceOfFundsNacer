@@ -43,7 +43,8 @@ public class WebSecurityConfig {
                         .allowedOrigins("http://localhost:4200")
                         .allowedMethods(HttpMethod.GET.name(),
                                 HttpMethod.POST.name(),
-                                HttpMethod.PUT.name())
+                                HttpMethod.PUT.name(),
+                                HttpMethod.DELETE.name())
                         .allowedHeaders(HttpHeaders.CONTENT_TYPE,
                                 HttpHeaders.AUTHORIZATION);
             }
@@ -59,8 +60,7 @@ public class WebSecurityConfig {
     }
     @Bean
     public GenerateJwtToken generateJwtToken() {
-        // Instantiate and configure GenerateJwtToken bean here
-        return new GenerateJwtToken(); // Example instantiation
+        return new GenerateJwtToken();
     }
     @Bean public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {return authenticationConfiguration.getAuthenticationManager();}

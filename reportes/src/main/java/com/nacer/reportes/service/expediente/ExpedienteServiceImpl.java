@@ -1,10 +1,12 @@
 package com.nacer.reportes.service.expediente;
 
 import com.nacer.reportes.dto.ExpedienteDTO;
+import com.nacer.reportes.dto.RegistroDTO;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.mapper.expediente.ExpedienteMapper;
 import com.nacer.reportes.model.*;
 import com.nacer.reportes.repository.expediente.ExpedienteRepository;
+import com.nacer.reportes.repository.registro.RegistroRepository;
 import com.nacer.reportes.service.efector.EfectorService;
 import com.nacer.reportes.service.auth.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ public class ExpedienteServiceImpl implements ExpedienteService{
     @Autowired
     private ExpedienteRepository expedienteRepository;
     @Autowired
+    private RegistroRepository registroRepository;
+    @Autowired
     private ExpedienteMapper expedienteMapper;
     @Autowired
     private EfectorService efectorService;
@@ -28,36 +32,40 @@ public class ExpedienteServiceImpl implements ExpedienteService{
     @Override
     public void crearExpediente(ExpedienteDTO expedienteDto) {
 
-        // Retrieve the Efector data from the DTO
-        String cuie = expedienteDto.getEfector().getCuie();
+
+        String cuie = expedienteDto.getEfectorDTO().getCuie();
         Efector efector = efectorService.getEfectorByCuie(cuie)
                 .orElseThrow(() -> new ResourceNotFoundException("Efector not found with CUIE: " + cuie));
 
-        // Map ExpedienteDTO to Expediente entity
         Expediente expediente = expedienteMapper.mapToExpediente(expedienteDto);
-        // Set the associated Efector
+
         expediente.setEfector(efector);
 
         Auditor auditor = new Auditor(LocalDate.now(),LocalDate.now());
         auditor.setCreadoPor(authService.getCurrentUser());
         auditor.setModificadoPor(authService.getCurrentUser());
+
         expediente.setAuditor(auditor);
-        // Create the registro
+
         Registro registro = new Registro();
         registro.setDetalle("EXPDTE: " + expedienteDto.getNumero());
         registro.setTipoRegistro(TipoRegistro.DEBE);
+
         Double montoEx = expedienteDto.getMontoSolicitado();
         if (efector.getRegion().equals(Region.SUBSECRETARIA)){
             registro.setMonto(montoEx);
         } else {
             registro.setMonto(montoEx * 0.60);
         }
+
         registro.setEfector(efector);
         registro.setAuditor(auditor);
         registro.setFecha(expedienteDto.getFechaExpediente());
         expediente.setRegistro(registro);
-        // Save the expediente
+
         expedienteRepository.save(expediente);
+        efectorService.actualizarSaldosEfector(efector, registroRepository.getTotalDebeByCuie(efector.getCuie()), registroRepository.getTotalHaberByCuie(efector.getCuie()));
+
     }
 
     @Override
@@ -70,8 +78,8 @@ public class ExpedienteServiceImpl implements ExpedienteService{
         Auditor auditor = existingExpediente.getAuditor();
 
         // Retrieve the Efector from the database based on the EfectorDTO in the ExpedienteDTO
-        Efector efector = efectorService.getEfectorByCuie(exDto.getEfector().getCuie())
-                .orElseThrow(() -> new ResourceNotFoundException("Efector not found with Cuie: " + exDto.getEfector().getCuie()));
+        Efector efector = efectorService.getEfectorByCuie(exDto.getEfectorDTO().getCuie())
+                .orElseThrow(() -> new ResourceNotFoundException("Efector not found with Cuie: " + exDto.getEfectorDTO().getCuie()));
 
         // Retrieve registro from existingExpediente
         Registro registro = existingExpediente.getRegistro();
@@ -86,26 +94,19 @@ public class ExpedienteServiceImpl implements ExpedienteService{
             registro.getAuditor().setModificadoPor(authService.getCurrentUser());
         }
 
-        // Map fields from DTO to existing Expediente
         existingExpediente = expedienteMapper.mergeToExpediente(exDto, existingExpediente);
 
-        // Check if the Auditor is not null before updating modification date
-        if (auditor != null) {
-            // Update modification date of the auditor
-            auditor.setFechaDeModificacion(LocalDate.now());
-        }
-
-        // Set registro to expediente
-        existingExpediente.setRegistro(registro);
-
-        // Set the Efector in the Expediente
-        existingExpediente.setEfector(efector);
-
-        // Set the updated Auditor back to the Expediente
+        auditor.setModificadoPor(authService.getCurrentUser());
+        auditor.setFechaDeModificacion(LocalDate.now());
         existingExpediente.setAuditor(auditor);
 
-        // Save the updated Expediente entity
+        existingExpediente.setRegistro(registro);
+
+        existingExpediente.setEfector(efector);
+
         expedienteRepository.save(existingExpediente);
+        efectorService.actualizarSaldosEfector(efector, registroRepository.getTotalDebeByCuie(efector.getCuie()), registroRepository.getTotalHaberByCuie(efector.getCuie()));
+
     }
 
 
@@ -137,5 +138,12 @@ public class ExpedienteServiceImpl implements ExpedienteService{
     @Override
     public List<ExpedienteDTO> getExpedientes() {
         return expedienteMapper.mapToListExpedienteDTO(expedienteRepository.findAll());
+    }
+
+    @Override
+    public void eliminarExpediente(ExpedienteDTO expediente) {
+        Expediente expediente1 = expedienteRepository.getReferenceById(expediente.getId());
+        registroRepository.delete(expediente1.getRegistro());
+        expedienteRepository.delete(expedienteMapper.mapToExpediente(expediente));
     }
 }

@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface ExpedienteService {
 
-    void crearExpediente(@Valid ExpedienteDTO expediente);
+    void crearExpediente(ExpedienteDTO expediente);
 
     void actualizarExpediente(ExpedienteDTO exDto);
 
@@ -24,4 +24,6 @@ public interface ExpedienteService {
     Collection<? extends ExpedienteDTO> getExpedientesPorRegion(String region);
 
     Collection<? extends ExpedienteDTO> getExpedientes();
+
+    void eliminarExpediente(ExpedienteDTO expediente);
 }

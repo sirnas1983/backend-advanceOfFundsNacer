@@ -69,9 +69,9 @@ public class RegistroServiceImpl implements RegistroService {
         Auditor auditor = new Auditor(LocalDate.now(), LocalDate.now());
         auditor.setCreadoPor(authService.getCurrentUser());
         registro.setAuditor(auditor);
-
         // Save the registro entity
         registroRepository.save(registro);
+        efectorService.actualizarSaldosEfector(efector, registroRepository.getTotalDebeByCuie(efector.getCuie()), registroRepository.getTotalHaberByCuie(efector.getCuie()));
     }
 
     @Override
@@ -103,6 +103,8 @@ public class RegistroServiceImpl implements RegistroService {
 
         // Save the updated Registro entity
         registroRepository.save(registro);
+        efectorService.actualizarSaldosEfector(registro.getEfector(), registroRepository.getTotalDebeByCuie(registro.getEfector().getCuie()), registroRepository.getTotalHaberByCuie(registro.getEfector().getCuie()));
+
     }
 
     // Method to validate TipoRegistro enum

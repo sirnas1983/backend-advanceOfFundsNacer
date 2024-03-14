@@ -4,7 +4,6 @@ import com.nacer.reportes.constants.ApiConstants;
 import com.nacer.reportes.dto.ExpedienteDTO;
 import com.nacer.reportes.dto.ResponseWrapper;
 import com.nacer.reportes.exceptions.InvalidDataException;
-import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.service.efector.EfectorService;
 import com.nacer.reportes.service.expediente.ExpedienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +30,8 @@ public class ExpedienteController {
     @Secured("ADMIN")
     @PostMapping
     public ResponseEntity<?> persistExpediente(@RequestBody @Valid ExpedienteDTO expDto) {
-        // Check if the associated Efector exists
-        String cuie = expDto.getEfector().getCuie();
+        String cuie = expDto.getEfectorDTO().getCuie();
+
         if (!efectorService.existsByCuie(cuie)) {
             throw new InvalidDataException("El efector con CUIE " + cuie + " no existe");
         }
@@ -70,15 +69,12 @@ public class ExpedienteController {
         }
 
         // Check if the list is empty and return appropriate response
-        if (expedientes.isEmpty()) {
-            throw new ResourceNotFoundException("No se encontraron expedientes");
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseWrapper<>(HttpStatus.OK.value(),
-                            "Expedientes encontrados",
-                            expedientes)
-            );
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseWrapper<>(HttpStatus.OK.value(),
+                        "Expedientes encontrados",
+                        expedientes)
+        );
+
     }
 
     @Secured("ADMIN")
@@ -88,6 +84,17 @@ public class ExpedienteController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseWrapper<>(HttpStatus.OK.value(),
                         "Expediente modificado correctamente",
+                        null)
+        );
+    }
+
+    @Secured("ADMIN")
+    @DeleteMapping
+    public ResponseEntity<?> borrarExpediente(@RequestBody @Valid ExpedienteDTO exDto) {
+        expedienteService.eliminarExpediente(exDto);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseWrapper<>(HttpStatus.OK.value(),
+                        "Expediente eliminado correctamente",
                         null)
         );
     }

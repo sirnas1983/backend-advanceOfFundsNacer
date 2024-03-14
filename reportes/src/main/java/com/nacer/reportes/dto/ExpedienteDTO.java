@@ -1,6 +1,5 @@
 package com.nacer.reportes.dto;
 
-import com.nacer.reportes.model.Efector;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +17,7 @@ public class ExpedienteDTO {
     private UUID id;
     private String nombre;
     private String numero;
-    private EfectorDTO efector;
+    private EfectorDTO efectorDTO;
     private Double montoSolicitado;
     private LocalDate fechaExpediente;
     private AuditorDTO auditorDTO;

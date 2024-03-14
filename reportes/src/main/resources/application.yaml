@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/planNacer?createDatabaseIfNotExist=true
+    url: jdbc:mysql://database-plannacer.c5ui2oswmdqq.us-east-2.rds.amazonaws.com:3306/planSumarSalud
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
   jpa:

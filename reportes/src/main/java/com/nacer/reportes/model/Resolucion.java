@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@Table(name = "resolucion")
 public class Resolucion extends EntidadNacer{
 
     @Column(unique = true)

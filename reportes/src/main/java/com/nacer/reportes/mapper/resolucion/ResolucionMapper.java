@@ -2,6 +2,7 @@ package com.nacer.reportes.mapper.resolucion;
 
 import com.nacer.reportes.dto.ResolucionDTO;
 import com.nacer.reportes.mapper.ListMapper;
+import com.nacer.reportes.mapper.auditor.AuditorMapper;
 import com.nacer.reportes.mapper.expediente.ExpedienteMapper;
 import com.nacer.reportes.model.Expediente;
 import com.nacer.reportes.model.Resolucion;
@@ -17,6 +18,8 @@ public class ResolucionMapper {
 
     @Autowired
     private ExpedienteMapper expedienteMapper;
+    @Autowired
+    private AuditorMapper auditorMapper;
 
     public ResolucionDTO mapToResolucionDTO(Resolucion resolucion) {
         ResolucionDTO resolucionDTO = new ResolucionDTO();
@@ -29,6 +32,7 @@ public class ResolucionMapper {
             resolucionDTO.setFechaResolucion(resolucion.getFechaResolucion());
             resolucionDTO.setDescripcion(resolucion.getDescripcion());
             resolucionDTO.setFondosRendidos(resolucion.isFondosRendidos());
+            resolucionDTO.setAuditorDTO(auditorMapper.mapToAuditorDTO(resolucion.getAuditor()));
 
         }
         return resolucionDTO;
@@ -45,7 +49,6 @@ public class ResolucionMapper {
             resolucion.setFechaResolucion(resolucionDTO.getFechaResolucion());
             resolucion.setDescripcion(resolucionDTO.getDescripcion());
             resolucion.setFondosRendidos(resolucionDTO.isFondosRendidos());
-
         }
         return resolucion;
     }

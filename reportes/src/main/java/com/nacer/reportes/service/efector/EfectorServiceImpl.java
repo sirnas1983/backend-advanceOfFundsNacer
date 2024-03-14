@@ -30,7 +30,18 @@ public class EfectorServiceImpl implements EfectorService{
     @Override
     public Optional<EfectorDTO> getEfectorDtoPorCuie(String cuie) {
         return efectorRepository.findByCuie(cuie)
-                .map(efectorMapper::mapToEfectorDTO);
+                .map(efectorMapper::mapToEfectorCompletoDTO);
+    }
+
+    @Override
+    public void actualizarSaldosEfector(Efector efector, Double totalDebe, Double totalHaber) {
+
+        // Actualizar los totales en el efector
+        efector.setTotalDebe(totalDebe);
+        efector.setTotalHaber(totalHaber);
+
+        // Guardar el efector actualizado en la base de datos
+        efectorRepository.save(efector);
     }
 
     @Override

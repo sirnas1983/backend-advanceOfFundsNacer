@@ -18,7 +18,7 @@ public class EntidadNacer {
     protected UUID id;
     @Column(unique = true)
     protected String nombre;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected Auditor auditor;
     private String descripcion;
 

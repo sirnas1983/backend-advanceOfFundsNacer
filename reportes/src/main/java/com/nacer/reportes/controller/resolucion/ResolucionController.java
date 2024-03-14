@@ -44,11 +44,11 @@ public class ResolucionController {
         if (numRe != null) {
             // Search by numeroResolucion
             Optional<ResolucionDTO> resolucionDTO = resolucionService.getResolucionPorNumero(numRe);
-            resoluciones.add(resolucionDTO.orElseThrow(() -> new ResourceNotFoundException("No se encontró resolucion con número: " + numRe)));
+            resoluciones.add(resolucionDTO.orElse(null));
         } else if (numEx != null) {
             // Search by numEx
             Optional<ResolucionDTO> resolucionDTO = resolucionService.getResolucionPorNumEx(numEx);
-            resoluciones.add(resolucionDTO.orElseThrow(() -> new ResourceNotFoundException("No se encontró resolucion con número de expdiente: " + numEx)));
+            resoluciones.add(resolucionDTO.orElse(null));
         } else if (cuie != null) {
             // Search by cuie
             resoluciones.addAll(resolucionService.getResolucionPorEfector(cuie));
@@ -61,11 +61,7 @@ public class ResolucionController {
         }
 
         // Check if the list is empty and return appropriate response
-        if (resoluciones.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resoluciones);
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body(resoluciones);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(resoluciones);
     }
 
     @Secured("ADMIN")
@@ -74,6 +70,15 @@ public class ResolucionController {
         resolucionService.actualizarResolucion(resDto);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseWrapper<>(HttpStatus.OK.value(), "Resolucion actualizada correctamente", null)
+        );
+    }
+
+    @Secured("ADMIN")
+    @DeleteMapping
+    public ResponseEntity<?> borrarResolucion(@RequestBody @Valid ResolucionDTO resDto) {
+        resolucionService.eliminarResolucion(resDto);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseWrapper<>(HttpStatus.OK.value(), "Resolucion borrada correctamente", null)
         );
     }
 }

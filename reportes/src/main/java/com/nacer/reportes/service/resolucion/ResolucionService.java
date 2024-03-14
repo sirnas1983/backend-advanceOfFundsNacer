@@ -21,4 +21,6 @@ public interface ResolucionService {
     List<ResolucionDTO> getResolucionPorRegion(String region);
 
     Optional<ResolucionDTO> getResolucionPorNumEx(String numEx);
+
+    void eliminarResolucion(ResolucionDTO resolucion);
 }

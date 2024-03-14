@@ -134,4 +134,9 @@ public class ResolucionServiceImpl implements ResolucionService {
         return resolucionRepository.findByNumeroExpediente(numEx)
                 .map(resolucionMapper::mapToResolucionDTO);
     }
+
+    @Override
+    public void eliminarResolucion(ResolucionDTO resolucion) {
+        resolucionRepository.delete(resolucionMapper.mapToResolucion(resolucion));
+    }
 }

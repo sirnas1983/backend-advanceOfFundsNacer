@@ -3,6 +3,7 @@ package com.nacer.reportes.repository.registro;
 import com.nacer.reportes.model.Registro;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,4 +15,10 @@ public interface RegistroRepository extends JpaRepository<Registro, UUID> {
             "WHERE (?1 is null OR registro.efector.cuie LIKE ?1) "
     )
     List<Registro> findByCuie(String cuie);
+
+    @Query("SELECT SUM(r.monto) FROM Registro r WHERE r.efector.cuie = :cuie AND r.tipoRegistro = 'DEBE'")
+    Double getTotalDebeByCuie(@Param("cuie") String cuie);
+
+    @Query("SELECT SUM(r.monto) FROM Registro r WHERE r.efector.cuie = :cuie AND r.tipoRegistro = 'HABER'")
+    Double getTotalHaberByCuie(@Param("cuie") String cuie);
 }
