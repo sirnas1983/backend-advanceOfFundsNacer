@@ -35,7 +35,6 @@ public class RegistroController {
         );
     }
 
-    @Secured("ADMIN")
     @GetMapping
     public ResponseEntity<?> getRegistros(
             @RequestParam(name = "cuie", required = false) @Valid String cuie,

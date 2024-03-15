@@ -24,15 +24,14 @@ public class UserMapper {
     public UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
-        dto.setUsername(user.getEmail()); // Assuming email is the username
+        dto.setUsername(user.getEmail());
         dto.setEmail(user.getEmail());
         dto.setRoles(user.getRoles().stream().map(Enum::name).collect(Collectors.toList()));
-        dto.setValidated(user.isValidated());
-        dto.setUnlocked(user.isUnlocked());
         dto.setLastLoginDate(user.getLastLoginDate());
+        dto.setValidated(user.isEnabled());
+        dto.setUnlocked(user.isAccountNonLocked());
         return dto;
     }
-
     public User toUserNoPassword(UserDTO userDTO) {
         User user = new User();
         user.setId(userDTO.getId());

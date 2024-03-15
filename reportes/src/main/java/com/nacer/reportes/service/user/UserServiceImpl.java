@@ -2,9 +2,10 @@ package com.nacer.reportes.service.user;
 
 import com.nacer.reportes.dto.UserDTO;
 import com.nacer.reportes.dto.AuthenticationUserDto;
+import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.mapper.user.UserMapper;
-import com.nacer.reportes.model.Auditor;
 import com.nacer.reportes.model.Rol;
+import com.nacer.reportes.model.TipoRegistro;
 import com.nacer.reportes.model.User;
 import com.nacer.reportes.repository.user.UserRepository;
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.toUserWithPassword(userDto);
-        user.setRoles(Collections.singletonList(Rol.ADMIN));
+        user.setRoles(Collections.singletonList(Rol.USER));
         userRepository.save(user);
         logger.info("User created successfully: {}", user.getEmail());
     }
@@ -76,5 +76,38 @@ public class UserServiceImpl implements UserService {
         Objects.requireNonNull(email, "Email must not be null");
 
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public void editUser(UserDTO userDTO) {
+        Optional<User> userOptional = userRepository.findById(userDTO.getId());
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontro usuario con ese ID");
+        }
+        User user = userOptional.get();
+        user.setEmail(userDTO.getEmail());
+        List<Rol> roles = new ArrayList<>();
+        for (String rol : userDTO.getRoles()) {
+            if(isValidRol(rol)){
+                roles.add(Rol.valueOf(rol));
+            } else {
+                throw new ResourceNotFoundException("Rol " + rol + " no encontrado");
+            }
+
+        }
+        user.setRoles(roles);
+        user.setEnabled(userDTO.isValidated());
+        user.setAccountNonLocked(userDTO.isUnlocked());
+        user.setLastLoginDate(userDTO.getLastLoginDate());
+        userRepository.save(user);
+    }
+
+    private boolean isValidRol(String rol) {
+        try {
+            Rol.valueOf(rol);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

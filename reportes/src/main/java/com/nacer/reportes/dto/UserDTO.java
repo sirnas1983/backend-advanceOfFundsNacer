@@ -18,7 +18,6 @@ public class UserDTO {
     private String username; // Assuming username is the email
     private String email;
     private List<String> roles;
-    private AuditorDTO auditorDTO;
     private boolean validated;
     private boolean unlocked;
     private LocalDateTime lastLoginDate;

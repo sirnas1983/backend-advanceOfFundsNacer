@@ -1,5 +1,6 @@
 package com.nacer.reportes.security.user;
 
+import com.nacer.reportes.exceptions.BadCredentialsException;
 import com.nacer.reportes.model.User;
 import com.nacer.reportes.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,14 @@ public class AuthenticationService {
         // Load user details by email
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-        // Check if the provided password matches the encoded password in the user details
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
-            // If authentication succeeds, update last login timestamp
-            User user = userRepository.findByEmail(email).get(); // Assuming UserDetails is implemented by your User class
+
+            User user = userRepository.findByEmail(email).get();
+
+            if (!user.isEnabled() || !user.isAccountNonLocked()) {
+                throw new BadCredentialsException("Usuario bloqueado o no habilitado para iniciar sesión");
+            }
+
             user.setLastLoginDate(LocalDateTime.now());
             userRepository.save(user); // Save the updated user details
             // Passwords match, generate JWT token
@@ -48,8 +53,5 @@ public class AuthenticationService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userDetailsService.loadUserByUsername(username);
     }
-
-
-
 
 }

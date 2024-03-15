@@ -59,14 +59,10 @@ public class UserController {
             @RequestParam(name="id", required = false)
             @Valid UUID id) {
         if (Objects.isNull(id)) {
-            // If no ID is provided, return all users
             List<UserDTO> userDTOs = userService.getUsers();
             return ResponseEntity.ok(new ResponseWrapper<>(HttpStatus.OK.value(), "Success", userDTOs));
         } else {
-            // Find the user by ID
             Optional<UserDTO> userOptional = userService.getUser(id);
-            // If the user is found, return it in the response body
-            // If the user is not found, return a 404 Not Found response with an error message
             return userOptional.<ResponseEntity<ResponseWrapper<?>>>map(userDTO ->
                     ResponseEntity.ok(new ResponseWrapper<>(HttpStatus.OK.value(),
                             "Success", userDTO))).orElseGet(
@@ -88,5 +84,15 @@ public class UserController {
         String jwtToken = JwtUtils.extractTokenFromRequest(request);
         tokenBlacklistService.blacklistToken(jwtToken);
         return ResponseEntity.ok(new ResponseWrapper<>(HttpStatus.OK.value(), "Logged out successfully", null));
+    }
+
+    @PutMapping
+    @Secured("ADMIN")
+    @ResponseBody
+    public ResponseEntity<ResponseWrapper<?>> editUser(@RequestBody @Valid UserDTO userDTO) {
+        // Call the service method to edit the user
+        userService.editUser(userDTO);
+        return ResponseEntity.ok(new ResponseWrapper<>(HttpStatus.OK.value(), "Logged out successfully", null));
+
     }
 }

@@ -45,7 +45,6 @@ public class ExpedienteController {
         );
     }
 
-    @Secured("ADMIN")
     @GetMapping
     public ResponseEntity<?> getExpedientesPorParametros(
             @RequestParam(name = "numEx", required = false) @Valid String numEx,

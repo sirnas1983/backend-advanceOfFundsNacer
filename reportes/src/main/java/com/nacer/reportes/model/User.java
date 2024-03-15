@@ -9,8 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,7 +29,9 @@ public class User implements UserDetails {
     private UUID id;
     private String email;
     private String password;
-    private LocalDateTime lastLoginDate; // Last login date
+    private LocalDateTime lastLoginDate;
+    private boolean enabled = true;
+    private boolean accountNonLocked = true;
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<Rol> roles = new ArrayList<>();
@@ -88,7 +88,7 @@ public class User implements UserDetails {
     }
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.accountNonLocked;
     }
     @Override
     public boolean isCredentialsNonExpired() {
@@ -96,22 +96,7 @@ public class User implements UserDetails {
     }
     @Override
     public boolean isEnabled() {
-        return true;
-    }
-    public void addRole(Rol role) {
-        roles.add(role);
-    }
-    // Method to remove a role from the user
-    public void removeRole(Rol role) {
-        roles.remove(role);
-    }
-    @Transient
-    public boolean isValidated() {
-        return isEnabled();
-    }
-    @Transient
-    public boolean isUnlocked() {
-        return isAccountNonLocked();
+        return this.enabled;
     }
 
 

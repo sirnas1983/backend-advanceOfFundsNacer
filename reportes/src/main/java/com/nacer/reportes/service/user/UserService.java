@@ -17,4 +17,6 @@ public interface UserService {
     List<UserDTO> getUsers();
     Optional<User> getUserByEmail(String email);
     Boolean existsByEmail(String email);
+
+    void editUser(UserDTO user);
 }
