@@ -52,7 +52,6 @@ public class EfectorMapper {
             efectorDTO.setCuie(efector.getCuie());
             efectorDTO.setRegion(efector.getRegion());
             efectorDTO.setDescripcion(efector.getDescripcion());
-            // Verificar si totalDebe y totalHaber no son nulos antes de calcular el saldo
             Double totalDebe = (efector.getTotalDebe() != null) ? efector.getTotalDebe() : 0.0;
             Double totalHaber = (efector.getTotalHaber() != null) ? efector.getTotalHaber() : 0.0;
 

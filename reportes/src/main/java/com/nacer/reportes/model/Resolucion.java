@@ -16,7 +16,7 @@ public class Resolucion extends EntidadNacer{
 
     @Column(unique = true)
     private String numero;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private Expediente expediente;
     private Float montoOtorgado;
     private LocalDate fechaResolucion;

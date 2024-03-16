@@ -103,7 +103,10 @@ public class RegistroServiceImpl implements RegistroService {
 
         // Save the updated Registro entity
         registroRepository.save(registro);
-        efectorService.actualizarSaldosEfector(registro.getEfector(), registroRepository.getTotalDebeByCuie(registro.getEfector().getCuie()), registroRepository.getTotalHaberByCuie(registro.getEfector().getCuie()));
+        efectorService.
+                actualizarSaldosEfector(registro.getEfector(),
+                registroRepository.getTotalDebeByCuie(registro.getEfector().getCuie()),
+                        registroRepository.getTotalHaberByCuie(registro.getEfector().getCuie()));
 
     }
 

@@ -20,7 +20,7 @@ public class Registro {
     private UUID id;
     private LocalDate fecha;
     private Double monto;
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "efector")
     private Efector efector;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

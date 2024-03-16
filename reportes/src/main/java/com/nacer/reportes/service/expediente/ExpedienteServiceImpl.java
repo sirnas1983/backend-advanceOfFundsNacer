@@ -142,8 +142,9 @@ public class ExpedienteServiceImpl implements ExpedienteService{
 
     @Override
     public void eliminarExpediente(ExpedienteDTO expediente) {
-        Expediente expediente1 = expedienteRepository.getReferenceById(expediente.getId());
-        registroRepository.delete(expediente1.getRegistro());
-        expedienteRepository.delete(expedienteMapper.mapToExpediente(expediente));
+        expedienteRepository.deleteById(expediente.getId());
+        Efector efector = efectorService.getEfectorByCuie(expediente.getEfectorDTO().getCuie()).orElseThrow(
+                ()-> new ResourceNotFoundException("No se encontro efector con CUIE:" + expediente.getEfectorDTO().getCuie()));
+        efectorService.actualizarSaldosEfector(efector, registroRepository.getTotalDebeByCuie(efector.getCuie()), registroRepository.getTotalHaberByCuie(efector.getCuie()));
     }
 }

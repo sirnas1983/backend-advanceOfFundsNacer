@@ -18,7 +18,7 @@ public class Expediente extends EntidadNacer{
 
     @Column(unique = true)
     private String numero;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "efector")
     private Efector efector;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)

@@ -28,10 +28,10 @@ public class Auditor {
     private UUID id;
     private LocalDate fechaCreacion;
     private LocalDate fechaDeModificacion;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
     @Nullable
     private User creadoPor;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
     @Nullable
     private User modificadoPor;
 
