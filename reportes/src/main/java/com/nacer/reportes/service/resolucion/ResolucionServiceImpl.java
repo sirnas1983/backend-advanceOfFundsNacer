@@ -6,7 +6,7 @@ import com.nacer.reportes.mapper.ObjectMapper;
 import com.nacer.reportes.mapper.resolucion.ResolucionMapper;
 import com.nacer.reportes.model.Auditor;
 import com.nacer.reportes.model.Expediente;
-import com.nacer.reportes.model.Region;
+import com.nacer.reportes.model.RegionEnum;
 import com.nacer.reportes.model.Resolucion;
 import com.nacer.reportes.repository.expediente.ExpedienteRepository;
 import com.nacer.reportes.repository.resolucion.ResolucionRepository;
@@ -120,7 +120,7 @@ public class ResolucionServiceImpl implements ResolucionService {
     @Override
     public List<ResolucionDTO> getResolucionPorRegion(String region) {
         try {
-            Region regionEnum = Region.valueOf(region);
+            RegionEnum regionEnum = RegionEnum.valueOf(region);
 
             return resolucionMapper.mapToListResolucionDTO(
                     resolucionRepository.findByRegion(regionEnum));

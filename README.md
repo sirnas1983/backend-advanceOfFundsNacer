@@ -39,7 +39,7 @@ A summary report is generated to ensure there are no discrepancies between exped
 The software should include the following features:
 
 - User login with different access levels: administrator with full access and administrative user with read-only access to graphs and available balances.
-- Annual evolution graphs per effector and per region, showing the dates of advance fund requests and renditions.
+- Annual evolution graphs per effector and per regionEnum, showing the dates of advance fund requests and renditions.
 - Display of targets, indicating pending advance requests, renditions, and deadlines.
 - Exportable reports to PDF and Excel formats for easy sharing via email.
 

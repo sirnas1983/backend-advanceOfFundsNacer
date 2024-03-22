@@ -1,14 +1,11 @@
 package com.nacer.reportes.dto;
 
 import com.nacer.reportes.model.Region;
-import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 
 @AllArgsConstructor
@@ -20,7 +17,7 @@ public class EfectorDTO {
     private UUID id;
     private String nombre;
     private String cuie;
-    private Region region;
+    private String region;
     private AuditorDTO auditorDTO;
     private Double totalHaber;
     private Double totalDebe;

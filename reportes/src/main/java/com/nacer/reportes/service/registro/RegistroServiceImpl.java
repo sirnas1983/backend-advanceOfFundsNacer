@@ -1,6 +1,7 @@
 package com.nacer.reportes.service.registro;
 
 import com.nacer.reportes.dto.RegistroDTO;
+import com.nacer.reportes.dto.others.ResumenRegionDTO;
 import com.nacer.reportes.exceptions.InvalidDataException;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.mapper.ObjectMapper;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -108,6 +110,18 @@ public class RegistroServiceImpl implements RegistroService {
                 registroRepository.getTotalDebeByCuie(registro.getEfector().getCuie()),
                         registroRepository.getTotalHaberByCuie(registro.getEfector().getCuie()));
 
+    }
+    @Override
+    public List<ResumenRegionDTO> findAllSumaDebeSumaHaberByRegion() {
+        List<Object[]> resultados = registroRepository.findAllSumaDebeSumaHaberByRegion();
+        List<ResumenRegionDTO> resumenRegionDTOS = new ArrayList<>();
+        for (Object[] resultado : resultados) {
+            String nombreRegion = (String) resultado[0];
+            Double sumaDebe = (Double) resultado[1];
+            Double sumaHaber = (Double) resultado[2];
+            resumenRegionDTOS.add(new ResumenRegionDTO(nombreRegion, sumaDebe, sumaHaber));
+        }
+        return resumenRegionDTOS;
     }
 
     // Method to validate TipoRegistro enum

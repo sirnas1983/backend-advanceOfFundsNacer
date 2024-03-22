@@ -1,9 +1,11 @@
 package com.nacer.reportes.bootstrap;
 
 
+import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.model.*;
 import com.nacer.reportes.repository.efector.EfectorRepository;
-import com.nacer.reportes.service.user.UserService;
+import com.nacer.reportes.repository.region.RegionRepository;
+import com.nacer.reportes.service.region.RegionService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,28 +24,43 @@ public class BootstrapData implements CommandLineRunner {
 
     @Autowired
     private EfectorRepository efectorRepository;
+    @Autowired
+    private RegionService regionService;
+    @Autowired
+    private RegionRepository regionRepository;
 
-    private static final Map<String, Region> regionMap = new HashMap<>();
+    private static final Map<String, RegionEnum> regionMap = new HashMap<>();
 
     static {
-        regionMap.put("R I", Region.I);
-        regionMap.put("R II", Region.II);
-        regionMap.put("R III", Region.III);
-        regionMap.put("R IV", Region.IV);
-        regionMap.put("R V", Region.V);
-        regionMap.put("R VI", Region.VI);
-        regionMap.put("R VII", Region.VII);
-        regionMap.put("R VIII", Region.VIII);
-        regionMap.put("SUBSEC", Region.SUBSECRETARIA);
+        regionMap.put("R I", RegionEnum.I);
+        regionMap.put("R II", RegionEnum.II);
+        regionMap.put("R III", RegionEnum.III);
+        regionMap.put("R IV", RegionEnum.IV);
+        regionMap.put("R V", RegionEnum.V);
+        regionMap.put("R VI", RegionEnum.VI);
+        regionMap.put("R VII", RegionEnum.VII);
+        regionMap.put("R VIII", RegionEnum.VIII);
+        regionMap.put("SUBSEC", RegionEnum.SUBSECRETARIA);
     }
     @Override
     public void run(String... args) throws Exception {
+//        cargarRegiones();
 //        insertData();
     }
 
     @Transactional
-    private void insertData() {
+    private void cargarRegiones(){
+        for (RegionEnum regionEnum : RegionEnum.values()) {
+            Region region = new Region();
+            region.setRegionEnum(regionEnum);
+            region.setAuditor(new Auditor());
+            region.setNombre(regionEnum.toString());
+            regionRepository.save(region);
+        }
+    }
 
+    @Transactional
+    private void insertData() {
 
         String[] data = {
                 "R I,La Clotilde,76,H02856,P.S. A  LA CLOTILDE",
@@ -219,26 +236,31 @@ public class BootstrapData implements CommandLineRunner {
         };
 
 
-        for (String rowData : data) {
 
-            String[] fields = rowData.split(",");
-            String region = fields[0];
-            String localidad = fields[1];
-            String codRecupero = fields[2];
-            String cuie = fields[3];
-            String nombre = fields[4];
-            Efector efector = new Efector();
-            efector.setRegion(regionMap.get(region));
-            efector.setLocalidad(localidad);
-            efector.setCodRecupero(codRecupero);
-            efector.setCuie(cuie);
-            efector.setNombre(nombre);
-            efector.setRegistros(new ArrayList<>());
-            efector.setExpedientes(new ArrayList<>());
-            Auditor auditor = new Auditor(LocalDate.now(), LocalDate.now());
-            efector.setAuditor(auditor);
-            efectorRepository.save(efector);
+            for (String rowData : data) {
+                String[] fields = rowData.split(",");
+                RegionEnum regionEnum = regionMap.get(fields[0]);
+                Region region = regionRepository.findByRegionEnum(regionEnum);
+                if (region == null) {
+                    throw new ResourceNotFoundException("No se encontró Region para: " + fields[0]);
+                }
+                String localidad = fields[1];
+                String codRecupero = fields[2];
+                String cuie = fields[3];
+                String nombre = fields[4];
+                Efector efector = new Efector();
+                efector.setRegion(region);
+                efector.setLocalidad(localidad);
+                efector.setCodRecupero(codRecupero);
+                efector.setCuie(cuie);
+                efector.setNombre(nombre);
+                efector.setRegistros(new ArrayList<>());
+                efector.setExpedientes(new ArrayList<>());
+                Auditor auditor = new Auditor(LocalDate.now(), LocalDate.now());
+                efector.setAuditor(auditor);
+                efectorRepository.save(efector);
+            }
         }
-    }
 
-}
+
+    }

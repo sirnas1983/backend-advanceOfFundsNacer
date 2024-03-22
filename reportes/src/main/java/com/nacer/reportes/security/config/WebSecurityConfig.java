@@ -81,8 +81,9 @@ public class WebSecurityConfig {
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class) // Specify order
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers(ApiConstants.BASE_URL + "/users").permitAll()
-                        .requestMatchers(ApiConstants.BASE_URL + "/users/authenticate").permitAll()
+                        .requestMatchers("/**").permitAll()
+//                        .requestMatchers(ApiConstants.BASE_URL + "/users").permitAll()
+//                        .requestMatchers(ApiConstants.BASE_URL + "/users/authenticate").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

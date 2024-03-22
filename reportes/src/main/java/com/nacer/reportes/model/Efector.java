@@ -2,7 +2,6 @@ package com.nacer.reportes.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Formula;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,8 @@ public class Efector extends EntidadNacer {
 
     @Column(unique = true)
     private String cuie;
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="region")
     private Region region;
     private String localidad;
     private String codRecupero;

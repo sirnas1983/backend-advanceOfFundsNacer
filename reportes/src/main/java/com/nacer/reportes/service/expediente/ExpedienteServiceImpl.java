@@ -1,7 +1,6 @@
 package com.nacer.reportes.service.expediente;
 
 import com.nacer.reportes.dto.ExpedienteDTO;
-import com.nacer.reportes.dto.RegistroDTO;
 import com.nacer.reportes.exceptions.ResourceNotFoundException;
 import com.nacer.reportes.mapper.expediente.ExpedienteMapper;
 import com.nacer.reportes.model.*;
@@ -52,7 +51,7 @@ public class ExpedienteServiceImpl implements ExpedienteService{
         registro.setTipoRegistro(TipoRegistro.DEBE);
 
         Double montoEx = expedienteDto.getMontoSolicitado();
-        if (efector.getRegion().equals(Region.SUBSECRETARIA)){
+        if (efector.getRegion().getRegionEnum().equals(RegionEnum.SUBSECRETARIA)){
             registro.setMonto(montoEx);
         } else {
             registro.setMonto(montoEx * 0.60);
@@ -86,7 +85,7 @@ public class ExpedienteServiceImpl implements ExpedienteService{
 
         // Modify registro if changes detected in monto
         if (!Objects.equals(exDto.getMontoSolicitado(), existingExpediente.getMontoSolicitado())) {
-            double monto = efector.getRegion().equals(Region.SUBSECRETARIA) ?
+            double monto = efector.getRegion().getRegionEnum().equals(RegionEnum.SUBSECRETARIA) ?
                     exDto.getMontoSolicitado() : exDto.getMontoSolicitado() * 0.60;
             monto = Math.round(monto * 100) /100.0;
             registro.setMonto(monto);
@@ -127,7 +126,7 @@ public class ExpedienteServiceImpl implements ExpedienteService{
     @Override
     public List<ExpedienteDTO> getExpedientesPorRegion(String region) {
         try {
-            Region regionEnum = Region.valueOf(region);
+            RegionEnum regionEnum = RegionEnum.valueOf(region);
             return expedienteMapper.mapToListExpedienteDTO(
                     expedienteRepository.findByRegion(regionEnum));
         } catch (IllegalArgumentException e){

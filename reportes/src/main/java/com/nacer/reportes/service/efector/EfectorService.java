@@ -25,4 +25,6 @@ public interface EfectorService {
     boolean existsByCuie(String cuie);
 
     Optional<Efector> getEfectorByCuie(String cuie);
+
+    List<Efector> getAll();
 }

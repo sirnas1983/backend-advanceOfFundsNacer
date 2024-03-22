@@ -4,8 +4,10 @@ import com.nacer.reportes.dto.EfectorDTO;
 import com.nacer.reportes.mapper.ListMapper;
 import com.nacer.reportes.mapper.auditor.AuditorMapper;
 import com.nacer.reportes.mapper.expediente.ExpedienteMapper;
+import com.nacer.reportes.mapper.region.RegionMapper;
 import com.nacer.reportes.mapper.registro.RegistroMapper;
 import com.nacer.reportes.model.Efector;
+import com.nacer.reportes.service.region.RegionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,11 @@ public class EfectorMapper {
 
     @Autowired
     private RegistroMapper registroMapper;
+    @Autowired
+    private RegionService regionService;
+
+    @Autowired
+    private RegionMapper regionMapper;
 
     @Autowired
     private ExpedienteMapper expedienteMapper;
@@ -31,9 +38,9 @@ public class EfectorMapper {
             efectorDTO.setNombre(efector.getNombre());
             efectorDTO.setCuie(efector.getCuie());
             efectorDTO.setAuditorDTO(auditorMapper.mapToAuditorDTO(efector.getAuditor()));
-            efectorDTO.setRegion(efector.getRegion());
+            efectorDTO.setRegion(efector.getRegion().getNombre());
             efectorDTO.setDescripcion(efector.getDescripcion());
-            // Verificar si totalDebe y totalHaber no son nulos antes de calcular el saldo
+
             Double totalDebe = (efector.getTotalDebe() != null) ? efector.getTotalDebe() : 0.0;
             Double totalHaber = (efector.getTotalHaber() != null) ? efector.getTotalHaber() : 0.0;
 
@@ -50,7 +57,7 @@ public class EfectorMapper {
             efectorDTO.setId(efector.getId());
             efectorDTO.setNombre(efector.getNombre());
             efectorDTO.setCuie(efector.getCuie());
-            efectorDTO.setRegion(efector.getRegion());
+            efectorDTO.setRegion(efector.getRegion().getNombre());
             efectorDTO.setDescripcion(efector.getDescripcion());
             Double totalDebe = (efector.getTotalDebe() != null) ? efector.getTotalDebe() : 0.0;
             Double totalHaber = (efector.getTotalHaber() != null) ? efector.getTotalHaber() : 0.0;
@@ -68,7 +75,6 @@ public class EfectorMapper {
             efector.setId(efectorDTO.getId());
             efector.setCuie(efectorDTO.getCuie());
             efector.setNombre(efectorDTO.getNombre());
-            efector.setRegion(efectorDTO.getRegion());
             efector.setDescripcion(efectorDTO.getDescripcion());
         }
         return efector;

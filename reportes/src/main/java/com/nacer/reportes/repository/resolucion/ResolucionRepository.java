@@ -1,6 +1,6 @@
 package com.nacer.reportes.repository.resolucion;
 
-import com.nacer.reportes.model.Region;
+import com.nacer.reportes.model.RegionEnum;
 import com.nacer.reportes.model.Resolucion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,5 +26,5 @@ public interface ResolucionRepository extends JpaRepository<Resolucion, UUID> {
     @Query("FROM Resolucion resolucion " +
             "WHERE (?1 is null OR resolucion.expediente.efector.region = ?1) "
     )
-    List<Resolucion> findByRegion(Region region);
+    List<Resolucion> findByRegion(RegionEnum regionEnum);
 }

@@ -6,7 +6,9 @@ import com.nacer.reportes.mapper.ObjectMapper;
 import com.nacer.reportes.model.*;
 import com.nacer.reportes.mapper.efector.EfectorMapper;
 import com.nacer.reportes.repository.efector.EfectorRepository;
+import com.nacer.reportes.repository.region.RegionRepository;
 import com.nacer.reportes.service.auth.AuthServiceImpl;
+import com.nacer.reportes.service.region.RegionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,9 @@ public class EfectorServiceImpl implements EfectorService{
     private EfectorRepository efectorRepository;
     @Autowired
     private EfectorMapper efectorMapper;
+
+    @Autowired
+    private RegionService regionService;
 
     @Autowired
     private AuthServiceImpl authService;
@@ -51,11 +56,10 @@ public class EfectorServiceImpl implements EfectorService{
         efector.setExpedientes(new ArrayList<>());
         efector.setRegistros(new ArrayList<>());
 
-        try {
-            efector.setRegion(efectorDTO.getRegion());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid region: " + efectorDTO.getRegion().toString());
-        }
+           efector.setRegion(regionService.getRegionPorNombre(efectorDTO.getRegion().toString()).orElseThrow(
+                    ()-> new ResourceNotFoundException("No existe region: "+ efectorDTO.getRegion().toString()))
+            );
+
         Auditor auditor = new Auditor(LocalDate.now(),LocalDate.now());
         auditor.setCreadoPor(authService.getCurrentUser());
         auditor.setModificadoPor(authService.getCurrentUser());
@@ -64,19 +68,15 @@ public class EfectorServiceImpl implements EfectorService{
     }
 
     @Override
-    public List<EfectorDTO> getEfectoresPorRegion(String region) {
-        try {
-            Region regionEnum = Region.valueOf(region);
-            List<Efector> efectores = efectorRepository.findByRegion(regionEnum);
-            return efectorMapper.mapToListEfectorDTO(efectores);
-        } catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("No se encontró Region " + region);
-        }
+    public List<EfectorDTO> getEfectoresPorRegion(String reg) {
+        Region region = regionService.getRegionPorNombre(reg).orElseThrow(() -> new ResourceNotFoundException("No se encontro region: "+ reg));
+        List<Efector> efectores = efectorRepository.findByRegion(region);
+        return efectorMapper.mapToListEfectorDTO(efectores);
     }
 
     @Override
     public Collection<? extends EfectorDTO> getTodosLosEfectores() {
-        List<Efector> efectores = efectorRepository.findAll();
+        List<Efector> efectores = efectorRepository.findAllWithRegion();
         return efectorMapper.mapToListEfectorDTO(efectores);
     }
 
@@ -115,5 +115,10 @@ public class EfectorServiceImpl implements EfectorService{
     @Override
     public Optional<Efector> getEfectorByCuie(String cuie) {
         return efectorRepository.findByCuie(cuie);
+    }
+
+    @Override
+    public List<Efector> getAll() {
+        return efectorRepository.findAll();
     }
 }
